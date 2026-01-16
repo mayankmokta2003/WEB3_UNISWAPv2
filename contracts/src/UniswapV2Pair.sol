@@ -2,18 +2,27 @@
 
 pragma solidity ^0.8.20;
 
-contract UniswapV2Pair {
+import {IERC20} from "../lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
+import {UniswapV2ERC20} from "./UniswapV2ERC20.sol";
 
+// interface IERC20 {
+//     function balanceOf(address) external view returns (uint);
+// }
+
+contract UniswapV2Pair is UniswapV2ERC20 {
     error AlreadyInitialized();
     error ZeroAddress();
-
-
 
     /*//////////////////////////////////////////////////////////////
                               EVENTS
     //////////////////////////////////////////////////////////////*/
     event Mint(address indexed sender, uint amount0, uint amount1);
-    event Burn(address indexed sender, uint amount0, uint amount1, address indexed to);
+    event Burn(
+        address indexed sender,
+        uint amount0,
+        uint amount1,
+        address indexed to
+    );
     event Swap(
         address indexed sender,
         uint amount0In,
@@ -23,9 +32,6 @@ contract UniswapV2Pair {
         address indexed to
     );
     event Sync(uint112 reserve0, uint112 reserve1);
-
-
-
 
     /*//////////////////////////////////////////////////////////////
                            STATE VARIABLES
@@ -39,16 +45,15 @@ contract UniswapV2Pair {
     uint32 private blockTimestampLast;
     bool private initialized;
 
-
-    function initialize(address _token0, address _token1) external{
-        if(initialized) revert AlreadyInitialized();
-        if(_token0 == address(0) || _token1 == address(0)) revert ZeroAddress();
+    function initialize(address _token0, address _token1) external {
+        if (initialized) revert AlreadyInitialized();
+        if (_token0 == address(0) || _token1 == address(0))
+            revert ZeroAddress();
         token0 = _token0;
         token1 = _token1;
         factory = msg.sender;
         initialized = true;
     }
-
 
     function _update(uint256 balance0, uint256 balance1) internal {
         require(balance0 <= type(uint112).max, "OVERFLOW");
@@ -59,8 +64,69 @@ contract UniswapV2Pair {
         emit Sync(reserve0, reserve1);
     }
 
+    function mint() external returns(uint256 liquidity){
+        (uint112 _reserve0, uint112 _reserve1, ) = getReserves();
+        uint256 balance0 = IERC20(token0).balanceOf(address(this));
+        uint256 balance1 = IERC20(token1).balanceOf(address(this));
+        uint256 amount0 = balance0 - _reserve0;
+        uint256 amount1 = balance1 - _reserve1;
+        require(amount0 > 0 && amount1 > 0, "INSUFFICIENT_LIQUIDITY");
+        uint256 _totalSupply = totalSupply();
+        if(_totalSupply == 0){
+            liquidity = _sqrt(amount0 * amount1);
+        }else{
+            liquidity = min((amount0 * _totalSupply) / _reserve0,
+            (amount1 * _totalSupply) / _reserve1);
+        }
+        require(liquidity > 0, "INSUFFICIENT_LIQUIDITY_MINTED");
+        _mintLp(msg.sender, liquidity);
+        _update(balance0, balance1);
+        emit Mint(msg.sender, amount0, amount1);
+    }
 
 
+    function burn(address to) external returns(uint256 amount0, uint amount1){
+        // (uint112 _reserve0, uint112 _reserve1, ) = getReserves();
+        address _token0 = token0;
+        address _token1 = token1;
+        uint256 balance0 = IERC20(_token0).balanceOf(address(this));
+        uint256 balance1 = IERC20(_token1).balanceOf(address(this));
+        uint256 _totalSupply = totalSupply();
+        uint256 liquidity = balanceOf(address(this));
+        amount0 = (liquidity * balance0) / _totalSupply;
+        amount1 = (liquidity * balance1) / _totalSupply;
+        require(amount0 > 0 && amount1 > 0, "INSUFFICIENT_LIQUIDITY_BURNED");
+        _burnLp(address(this), liquidity);
+        IERC20(_token0).transfer(to, amount0);
+        IERC20(_token1).transfer(to, amount1);
+        balance0 = IERC20(_token0).balanceOf(address(this));
+        balance1 = IERC20(_token1).balanceOf(address(this));
+        _update(balance0, balance1);
+        emit Burn(msg.sender, amount0, amount1, to);
+    }
+
+
+
+    /*//////////////////////////////////////////////////////////////
+                           MATH
+    //////////////////////////////////////////////////////////////*/
+
+    function _sqrt(uint256 y) internal pure returns (uint256 z) {
+        if (y > 3) {
+            z = y;
+            uint x = y / 2 + 1;
+            while (x < z) {
+                z = x;
+                x = (y / x + x) / 2;
+            }
+        } else if (y != 0) {
+            z = 1;
+        }
+    }
+
+    function min(uint x, uint y) internal pure returns (uint) {
+    return x < y ? x : y;
+}
 
 
 
@@ -68,8 +134,7 @@ contract UniswapV2Pair {
                            VIEW FUNCTIONS
     //////////////////////////////////////////////////////////////*/
 
-    function getReserves() public view returns (uint112, uint112, uint32){
-        return(reserve0, reserve1, blockTimestampLast);
+    function getReserves() public view returns (uint112, uint112, uint32) {
+        return (reserve0, reserve1, blockTimestampLast);
     }
-
 }
