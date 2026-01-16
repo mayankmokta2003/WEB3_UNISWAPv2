@@ -68,17 +68,33 @@ contract UniswapV2PairTest is Test {
 
 
     function testMintLPFirstTime() public {
-        (token0).mint(address(pair), 100);
+        token0.mint(address(pair), 100);
         token1.mint(address(pair), 200);
         uint256 lp = pair.mint();
-        uint256 bal = pair.balanceOf(address(this));
+        uint256 bal = pair.balanceOf(address(this)); //doubtttt pair kyuu
         console.log("lpppp", bal);
         assertGt(lp, 0);
         assert(bal == lp);
     }
 
-    // function testBurnLiquidity() public {
-    //     token0
-    // }
+    function testBurnLiquidity() public {
+        token0.mint(address(pair), 100);
+        token1.mint(address(pair), 200);
+        pair.mint();
+        uint256 lp = pair.balanceOf(address(this));
+        pair.transfer(address(pair), lp);
+        pair.burn(address(this));
+        assertEq(token0.balanceOf(address(this)), 100);
+    }
+
+
+    function testSwapToken0Out() public {
+        token0.mint(address(pair), 100);
+        token1.mint(address(pair), 100);
+        pair.mint();
+        token1.mint(address(pair), 10);
+        pair.swap(5, 0, address(this));
+        assertEq(token0.balanceOf(address(this)), 5);
+    }
 
 }
