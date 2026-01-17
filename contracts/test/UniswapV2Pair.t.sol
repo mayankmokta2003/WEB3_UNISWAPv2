@@ -4,7 +4,9 @@ pragma solidity ^0.8.20;
 
 import { Test,console } from "forge-std/Test.sol";
 import { UniswapV2Pair } from "../src/UniswapV2Pair.sol";
-import { MockERC20 } from "../src/MockERC20.sol";
+// import { MockERC20 } from "../src/MockERC20.sol";
+import { ERC20Mock } from "../lib/openzeppelin-contracts/contracts/mocks/token/ERC20Mock.sol";
+import { UniswapV2Router } from "../src/UniswapV2Router.sol";
 
 contract TestPair is UniswapV2Pair {
     function updatedForTest(uint256 b0, uint256 b1) external {
@@ -18,14 +20,14 @@ contract UniswapV2PairTest is Test {
     // TestPair  testPair;
     address _token0 = address(1);
     address _token1 = address(2);
-    MockERC20 token0;
-    MockERC20 token1;
+    ERC20Mock token0;
+    ERC20Mock token1;
 
     function setUp() public {
         pair = new UniswapV2Pair();
         // testPair = new TestPair();
-        token0 = new MockERC20("token0", "t0");
-        token1 = new MockERC20("token1", "t1");
+        token0 = new ERC20Mock();
+        token1 = new ERC20Mock();
         pair.initialize(address(token0), address(token1));
     }
 
@@ -95,6 +97,19 @@ contract UniswapV2PairTest is Test {
         token1.mint(address(pair), 10);
         pair.swap(5, 0, address(this));
         assertEq(token0.balanceOf(address(this)), 5);
+    }
+
+
+    function testAddLiquidityViaRouter() public {
+        UniswapV2Router router = new UniswapV2Router(address(pair), address(token0), address(token1));
+        token0.mint(address(this), 100);
+        token1.mint(address(this), 100);
+        token0.approve(address(router), 100);
+        token1.approve(address(router), 100);
+        router.addLiquidity(100, 100);
+        (uint112 reserve0, uint112 reserve1, ) = pair.getReserves();
+        assertEq(reserve0, 100);
+        assertEq(reserve1, 100);
     }
 
 }

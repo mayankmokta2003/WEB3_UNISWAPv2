@@ -44,6 +44,7 @@ contract UniswapV2Pair is UniswapV2ERC20 {
     uint112 private reserve1;
     uint32 private blockTimestampLast;
     bool private initialized;
+    uint public kLast;
 
     function initialize(address _token0, address _token1) external {
         if (initialized) revert AlreadyInitialized();
@@ -61,6 +62,7 @@ contract UniswapV2Pair is UniswapV2ERC20 {
         reserve0 = uint112(balance0);
         reserve1 = uint112(balance1);
         blockTimestampLast = uint32(block.timestamp);
+        kLast = uint(reserve0) * uint(reserve1);
         emit Sync(reserve0, reserve1);
     }
 
@@ -144,10 +146,9 @@ contract UniswapV2Pair is UniswapV2ERC20 {
         }
     }
 
-    function min(uint x, uint y) internal pure returns (uint) {
+    function min(uint256 x, uint256 y) internal pure returns (uint) {
     return x < y ? x : y;
 }
-
 
 
     /*//////////////////////////////////////////////////////////////
