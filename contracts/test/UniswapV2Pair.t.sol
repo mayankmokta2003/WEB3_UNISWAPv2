@@ -112,4 +112,19 @@ contract UniswapV2PairTest is Test {
         assertEq(reserve1, 100);
     }
 
+
+    function testSwapWithSlippageProtection() public {
+        UniswapV2Router router = new UniswapV2Router(address(pair), address(token0), address(token1));
+        address[] memory path = new address[](2);
+        path[0] = address(token0);
+        path[1] = address(token1);
+        token0.mint(address(this), 100);
+        token0.mint(address(pair), 100);
+        token1.mint(address(pair), 100);
+        pair.mint();
+        token0.approve(address(router), 50);
+        vm.expectRevert("SLIPPAGE_TOO_HIGH");
+        router.swapExactTokensForTokens(10, 20, path, address(this), block.timestamp);
+    }
+
 }
