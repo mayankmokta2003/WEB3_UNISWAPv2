@@ -21,6 +21,5 @@ export default function WalletConnect() {
             <button onClick={disconnect}>Disconnect</button>
         </div>
     )
-    
 
 }
