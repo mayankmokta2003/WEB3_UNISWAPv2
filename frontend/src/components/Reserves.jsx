@@ -1,37 +1,47 @@
-import { useReadContract } from "wagmi";
-import pairAbii from "../abi/UniswapV2Pair.json";
+// import { useReadContract } from "wagmi";
+// import pairAbi from "../abi/UniswapV2Pair.json";
 
-const PAIR_ADDRESS = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
+// const PAIR_ADDRESS = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
 
-export default function Reserves() {
-  const { data, isLoading, error } = useReadContract({
-    address: PAIR_ADDRESS,
-    abi: pairAbii,
-    functionName: "getReserves",
-  });
+// export default function Reserves() {
+//   const { data, isLoading, error } = useReadContract({
+//     address: PAIR_ADDRESS,
+//     abi: pairAbi,
+//     functionName: "getReserves",
+//   });
 
-  if (isLoading) return <p>Loading reserves...</p>;
-  if (error) return <p>Error fetching reserves</p> && console.log("PAIR_ADDRESS", PAIR_ADDRESS);
+//   if (isLoading) return <p>Loading reserves...</p>;
+//   if (error) return <p>Error fetching reserves</p> && console.log("PAIR_ADDRESS", PAIR_ADDRESS);
 
-  const reserve0 = data[0].toString();
-  const reserve1 = data[1];
+//   const reserve0 = data[0].toString();
+//   const reserve1 = data[1];
 
-  return (
-    <div>
-      <h3>Pool Reserves</h3>
+//   if(!isLoading){
+//     console.log("token0 is:", reserve0);
+//   }
 
-      <div className="flex justify-between">
-        <span>Token0</span>
-        <span>{reserve0.toString()}</span>
-      </div>
+//   return (
+//     <div>
+//       <h3>Pool Reserves</h3>
 
-      <div className="flex justify-between">
-        <span>Token1</span>
-        <span>{reserve1.toString()}</span>
-      </div>
-    </div>
-  );
-}
+//       <div className="flex justify-between">
+//         <span>Token0</span>
+//         <span>{reserve0.toString()}</span>
+//       </div>
+
+//       <div className="flex justify-between">
+//         <span>Token1</span>
+//         <span>{reserve1.toString()}</span>
+//       </div>
+
+//     </div>
+//   );
+// }
+
+
+
+
+
 
 
 // import { useReadContract } from "wagmi";
@@ -83,3 +93,54 @@ export default function Reserves() {
 //     </div>
 //   );
 // }
+
+
+
+
+
+
+
+import { useReadContract } from "wagmi";
+import pairAbi from "../abi/UniswapV2Pair.json";
+
+const PAIR_ADDRESS = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
+
+export default function Reserves() {
+  const {
+    data,
+    isLoading,
+    isError,
+  } = useReadContract({
+    address: PAIR_ADDRESS,
+    abi: pairAbi,
+    functionName: "getReserves",
+
+    // 🔥 THIS IS THE KEY
+    watch: true,
+  });
+
+  if (isLoading) return <p>Loading reserves...</p>;
+  if (isError || !data) return <p>Error fetching reserves</p>;
+
+  const reserve0 = data[0].toString();
+  const reserve1 = data[1].toString();
+
+  console.log("token0:", reserve0);
+  console.log("token1:", reserve1);
+
+  return (
+    <div>
+      <h3>Pool Reserves</h3>
+
+      <div className="flex justify-between">
+        <span>Token0</span>
+        <span>{reserve0}</span>
+      </div>
+
+      <div className="flex justify-between">
+        <span>Token1</span>
+        <span>{reserve1}</span>
+      </div>
+    </div>
+  );
+}
