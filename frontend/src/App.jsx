@@ -2,6 +2,7 @@ import WalletConnect from "./components/WalletConnect";
 import Reserves from "./components/Reserves";
 import AddLiquidity from "./components/AddLiquidity";
 import RemoveLiquidity from "./components/RemoveLiquidity";
+import Swap from "./components/Swap";
 
 function App() {
 
@@ -17,6 +18,7 @@ function App() {
         <Reserves />
         <AddLiquidity />
         <RemoveLiquidity />
+        <Swap />
       </div>
     </div>
    
