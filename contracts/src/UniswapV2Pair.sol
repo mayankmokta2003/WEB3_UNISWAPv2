@@ -66,25 +66,93 @@ contract UniswapV2Pair is UniswapV2ERC20 {
         emit Sync(reserve0, reserve1);
     }
 
-    function mint() external returns(uint256 liquidity){
-        (uint112 _reserve0, uint112 _reserve1, ) = getReserves();
-        uint256 balance0 = IERC20(token0).balanceOf(address(this));
-        uint256 balance1 = IERC20(token1).balanceOf(address(this));
-        uint256 amount0 = balance0 - _reserve0;
-        uint256 amount1 = balance1 - _reserve1;
-        require(amount0 > 0 && amount1 > 0, "INSUFFICIENT_LIQUIDITY");
-        uint256 _totalSupply = totalSupply();
-        if(_totalSupply == 0){
-            liquidity = _sqrt(amount0 * amount1);
-        }else{
-            liquidity = min((amount0 * _totalSupply) / _reserve0,
-            (amount1 * _totalSupply) / _reserve1);
-        }
-        require(liquidity > 0, "INSUFFICIENT_LIQUIDITY_MINTED");
-        _mintLp(msg.sender, liquidity);
-        _update(balance0, balance1);
-        emit Mint(msg.sender, amount0, amount1);
+    // function mint() external returns(uint256 liquidity){
+    //     (uint112 _reserve0, uint112 _reserve1, ) = getReserves();
+    //     uint256 balance0 = IERC20(token0).balanceOf(address(this));
+    //     uint256 balance1 = IERC20(token1).balanceOf(address(this));
+    //     uint256 amount0 = balance0 - _reserve0;
+    //     uint256 amount1 = balance1 - _reserve1;
+    //     require(amount0 > 0 && amount1 > 0, "INSUFFICIENT_LIQUIDITY");
+    //     uint256 _totalSupply = totalSupply();
+    //     if(_totalSupply == 0){
+    //         liquidity = _sqrt(amount0 * amount1);
+    //     }else{
+    //         liquidity = min((amount0 * _totalSupply) / _reserve0,
+    //         (amount1 * _totalSupply) / _reserve1);
+    //     }
+    //     require(liquidity > 0, "INSUFFICIENT_LIQUIDITY_MINTED");
+    //     _mintLp(msg.sender, liquidity);
+    //     _update(balance0, balance1);
+    //     emit Mint(msg.sender, amount0, amount1);
+    // }
+
+//     function mint() external returns (uint256 liquidity) {
+//     // 👇 tokens pull karo
+//     IERC20(token0).transferFrom(msg.sender, address(this), 
+//         IERC20(token0).balanceOf(msg.sender)
+//     );
+//     IERC20(token1).transferFrom(msg.sender, address(this), 
+//         IERC20(token1).balanceOf(msg.sender)
+//     );
+
+//     (uint112 _reserve0, uint112 _reserve1, ) = getReserves();
+
+//     uint256 balance0 = IERC20(token0).balanceOf(address(this));
+//     uint256 balance1 = IERC20(token1).balanceOf(address(this));
+
+//     uint256 amount0 = balance0 - _reserve0;
+//     uint256 amount1 = balance1 - _reserve1;
+
+//     require(amount0 > 0 && amount1 > 0, "INSUFFICIENT_LIQUIDITY");
+
+//     if (totalSupply() == 0) {
+//         liquidity = _sqrt(amount0 * amount1);
+//     } else {
+//         liquidity = min(
+//             (amount0 * totalSupply()) / _reserve0,
+//             (amount1 * totalSupply()) / _reserve1
+//         );
+//     }
+
+//     _mintLp(msg.sender, liquidity);
+//     _update(balance0, balance1);
+// }
+
+
+
+function mint() external returns (uint256 liquidity) {
+    (uint112 _reserve0, uint112 _reserve1, ) = getReserves();
+
+    uint256 balance0 = IERC20(token0).balanceOf(address(this));
+    uint256 balance1 = IERC20(token1).balanceOf(address(this));
+
+    uint256 amount0 = balance0 - _reserve0;
+    uint256 amount1 = balance1 - _reserve1;
+
+    require(amount0 > 0 && amount1 > 0, "INSUFFICIENT_LIQUIDITY");
+
+    if (totalSupply() == 0) {
+        liquidity = _sqrt(amount0 * amount1);
+    } else {
+        liquidity = min(
+            (amount0 * totalSupply()) / _reserve0,
+            (amount1 * totalSupply()) / _reserve1
+        );
     }
+
+    require(liquidity > 0, "INSUFFICIENT_LIQUIDITY_MINTED");
+
+    _mintLp(msg.sender, liquidity);
+    _update(balance0, balance1);
+
+    emit Mint(msg.sender, amount0, amount1);
+}
+
+
+
+
+
+
 
 
     function burn(address to) external returns(uint256 amount0, uint amount1){

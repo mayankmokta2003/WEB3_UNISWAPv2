@@ -10,6 +10,8 @@ interface IUniswapV2Pair {
     function swap(uint amount0Out, uint amount1Out, address to) external;
 
     function getReserves() external view returns (uint112, uint112, uint32);
+
+    function burn(address to) external returns(uint256, uint256);
 }
 
 contract UniswapV2Router {
@@ -47,7 +49,17 @@ contract UniswapV2Router {
         IUniswapV2Pair(pair).mint();
     }
 
-   
+    function removeLiquidity(
+        uint256 liquidity,
+        address to,
+        uint256 deadline
+    ) external ensure(deadline) returns (uint256 amount0, uint256 amount1) {
+        IERC20(pair).transferFrom(msg.sender, pair, liquidity);
+        (amount0, amount1) = IUniswapV2Pair(pair).burn(to);
+    }
+
+
+
 
     function swapExactTokensForTokens(
         uint256 amountIn,
@@ -70,18 +82,16 @@ contract UniswapV2Router {
         uint amountOut;
         bool zeroForOne = tokenIn == token0;
 
-        if(zeroForOne){
+        if (zeroForOne) {
             amountOut = getAmountOut(amountIn, r0, r1);
             require(amountOut >= amountOutMin, "SLIPPAGE_TOO_HIGH");
             IERC20(token0).transferFrom(msg.sender, pair, amountIn);
             IUniswapV2Pair(pair).swap(0, amountOut, to);
-        }else{
+        } else {
             amountOut = getAmountOut(amountIn, r1, r0);
             require(amountOut >= amountOutMin, "SLIPPAGE_TOO_HIGH");
             IERC20(token1).transferFrom(msg.sender, pair, amountIn);
             IUniswapV2Pair(pair).swap(amountOut, 0, to);
         }
     }
-
-
 }

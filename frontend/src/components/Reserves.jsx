@@ -1,146 +1,45 @@
-// import { useReadContract } from "wagmi";
-// import pairAbi from "../abi/UniswapV2Pair.json";
-
-// const PAIR_ADDRESS = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
-
-// export default function Reserves() {
-//   const { data, isLoading, error } = useReadContract({
-//     address: PAIR_ADDRESS,
-//     abi: pairAbi,
-//     functionName: "getReserves",
-//   });
-
-//   if (isLoading) return <p>Loading reserves...</p>;
-//   if (error) return <p>Error fetching reserves</p> && console.log("PAIR_ADDRESS", PAIR_ADDRESS);
-
-//   const reserve0 = data[0].toString();
-//   const reserve1 = data[1];
-
-//   if(!isLoading){
-//     console.log("token0 is:", reserve0);
-//   }
-
-//   return (
-//     <div>
-//       <h3>Pool Reserves</h3>
-
-//       <div className="flex justify-between">
-//         <span>Token0</span>
-//         <span>{reserve0.toString()}</span>
-//       </div>
-
-//       <div className="flex justify-between">
-//         <span>Token1</span>
-//         <span>{reserve1.toString()}</span>
-//       </div>
-
-//     </div>
-//   );
-// }
-
-
-
-
-
-
-
-// import { useReadContract } from "wagmi";
-// import pairAbi from "../abi/UniswapV2Pair.json";
-
-// const PAIR_ADDRESS = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
-// const ANVIL_CHAIN_ID = 31337;
-
-// export default function Reserves() {
-//   // 1️⃣ READ CONTRACT
-//   const {
-//     data,
-//     isLoading,
-//     isError,
-//   } = useReadContract({
-//     address: PAIR_ADDRESS,
-//     abi: pairAbi,
-//     functionName: "getReserves",
-
-//     // 🔥 THIS FIXES EVERYTHING
-//     chainId: ANVIL_CHAIN_ID,
-
-//     // safety
-//     enabled: Boolean(PAIR_ADDRESS),
-//   });
-
-//   // 2️⃣ SAFE GUARDS
-//   if (isLoading) return <p>Loading reserves...</p>;
-//   if (isError || !data) return <p>Error fetching reserves</p>;
-
-//   // 3️⃣ DATA
-//   const reserve0 = data[0].toString();
-//   const reserve1 = data[1].toString();
-
-//   // 4️⃣ UI
-//   return (
-//     <div className="mt-6 p-4 border rounded-lg">
-//       <h3 className="text-lg font-semibold mb-2">Pool Reserves</h3>
-
-//       <div className="flex justify-between">
-//         <span>Token0</span>
-//         <span>{reserve0}</span>
-//       </div>
-
-//       <div className="flex justify-between">
-//         <span>Token1</span>
-//         <span>{reserve1}</span>
-//       </div>
-//     </div>
-//   );
-// }
-
-
-
-
-
-
 
 import { useReadContract } from "wagmi";
 import pairAbi from "../abi/UniswapV2Pair.json";
-
-const PAIR_ADDRESS = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
+import erc20Abi from "../abi/ERC20.json";
+import { PAIR_ADDRESS, TOKEN0_ADDRESS, TOKEN1_ADDRESS } from "../config/addresses";
 
 export default function Reserves() {
-  const {
-    data,
-    isLoading,
-    isError,
-  } = useReadContract({
+  const { data: reserves, isLoading } = useReadContract({
     address: PAIR_ADDRESS,
     abi: pairAbi,
     functionName: "getReserves",
-
-    // 🔥 THIS IS THE KEY
-    watch: true,
   });
 
-  if (isLoading) return <p>Loading reserves...</p>;
-  if (isError || !data) return <p>Error fetching reserves</p>;
+  const { data: pairToken0Balance } = useReadContract({
+    address: TOKEN0_ADDRESS,
+    abi: erc20Abi,
+    functionName: "balanceOf",
+    args: [PAIR_ADDRESS],
 
-  const reserve0 = data[0].toString();
-  const reserve1 = data[1].toString();
+  });
 
-  console.log("token0:", reserve0);
-  console.log("token1:", reserve1);
+  const { data: pairToken1Balance } = useReadContract({
+    address: TOKEN1_ADDRESS,
+    abi: erc20Abi,
+    functionName: "balanceOf",
+    args: [PAIR_ADDRESS],
+  })
+
+  console.log("PAIR token0 balance:", pairToken0Balance?.toString());
+  console.log("blablablabla", reserves?.toString());
+
+  if (isLoading || !reserves) return <p>Loading reserves...</p>;
 
   return (
     <div>
-      <h3>Pool Reserves</h3>
-
-      <div className="flex justify-between">
-        <span>Token0</span>
-        <span>{reserve0}</span>
-      </div>
-
-      <div className="flex justify-between">
-        <span>Token1</span>
-        <span>{reserve1}</span>
-      </div>
+      <p>Token0: {pairToken1Balance?.toString()}</p>
+      <p>Token1: {pairToken0Balance?.toString()}</p>
+      {/* <p>Token0: {reserves[0].toString()}</p>
+      <p>Token1: {reserves[1].toString()}</p> */}
     </div>
   );
 }
+
+
+
