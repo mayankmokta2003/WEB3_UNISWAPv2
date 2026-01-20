@@ -1,19 +1,37 @@
 import { useState } from "react";
-import { useWriteContract } from "wagmi"
-import { PAIR_ADDRESS, ROUTER_ADDRESS, TOKEN0_ADDRESS, TOKEN1_ADDRESS } from "../config/addresses";
+import { useWriteContract, useReadContract } from "wagmi"
+import { PAIR_ADDRESS, ROUTER_ADDRESS, FACTORY_ADDRESS, TOKEN0_ADDRESS, TOKEN1_ADDRESS } from "../config/addresses";
 import pairAbi from "../abi/UniswapV2Pair.json"
 import routerAbi from "../abi/UniswapV2Router.json";
+import factoryAbi from "../abi/UniswapV2Factory.json";
 
 
 export default function RemoveLiquidity() {
 
     const [liquidity, setLiquidity] = useState("");
     const { writeContractAsync } = useWriteContract();
+    const { data: pairAddress } = useReadContract({
+        address: FACTORY_ADDRESS,
+        abi: factoryAbi,
+        functionName: "getPair",
+        args: [TOKEN0_ADDRESS, TOKEN1_ADDRESS],
+    });
 
     async function removeLiquidity() {
         try {
+
+           
+
+
+            // await writeContractAsync({
+            //     address: PAIR_ADDRESS,
+            //     abi: pairAbi,
+            //     functionName: "approve",
+            //     args: [ROUTER_ADDRESS, liquidity]
+            // });
+
             await writeContractAsync({
-                address: PAIR_ADDRESS,
+                address: pairAddress,
                 abi: pairAbi,
                 functionName: "approve",
                 args: [ROUTER_ADDRESS, liquidity]
@@ -24,7 +42,7 @@ export default function RemoveLiquidity() {
                 abi: routerAbi,
                 functionName: "removeLiquidity",
                 args: [
-                    BigInt(liquidity), window.ethereum.selectedAddress, Math.floor(Date.now() / 1000) + 60
+                    TOKEN0_ADDRESS, TOKEN1_ADDRESS, BigInt(liquidity),
                 ]
             });
             alert("Liquidity removed 🔥");

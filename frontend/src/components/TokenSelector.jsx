@@ -1,17 +1,23 @@
-export default function TokenSelector({ value, onChange }) {
-    return (
+import { TOKENS } from "../config/tokens";
+
+export default function TokenSelector({ label, selected, onSelect }) {
+  return (
+    <div>
+      <label>{label}</label>
       <select
-        className="border p-2 w-full"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
+        value={selected?.address || ""}
+        onChange={(e) => {
+          const token = TOKENS.find((t) => t.address === e.target.value);
+          onSelect(token);
+        }}
       >
-        <option value="">Select Token</option>
-        {TOKENS.map((t) => (
-          <option key={t.address} value={t.address}>
-            {t.symbol}
+        <option value="">Select token</option>
+        {TOKENS.map((token) => (
+          <option key={token.address} value={token.address}>
+            {token.symbol}
           </option>
         ))}
       </select>
-    );
-  }
-  
+    </div>
+  );
+}

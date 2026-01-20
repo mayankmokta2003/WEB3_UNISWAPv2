@@ -3,6 +3,7 @@ import Reserves from "./components/Reserves";
 import AddLiquidity from "./components/AddLiquidity";
 import RemoveLiquidity from "./components/RemoveLiquidity";
 import Swap from "./components/Swap";
+import LPDashboard from "./components/LPDashboard";
 
 function App() {
 
@@ -19,6 +20,7 @@ function App() {
         <AddLiquidity />
         <RemoveLiquidity />
         <Swap />
+        <LPDashboard />
       </div>
     </div>
    
@@ -26,4 +28,8 @@ function App() {
 }
 
 export default App;
+
+
+
+
 

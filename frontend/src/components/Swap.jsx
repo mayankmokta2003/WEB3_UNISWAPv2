@@ -1,18 +1,14 @@
 
-// import { useState, useEffect } from "react";
-// import {
-//   useWriteContract,
-//   useReadContract,
-//   useAccount,
-// } from "wagmi";
-
+// import { useEffect, useState } from "react";
+// import { useAccount, useReadContract, useWriteContract } from "wagmi";
 // import routerAbi from "../abi/UniswapV2Router.json";
+// import factoryAbi from "../abi/UniswapV2Factory.json";
 // import pairAbi from "../abi/UniswapV2Pair.json";
 // import erc20Abi from "../abi/ERC20.json";
 
 // import {
 //   ROUTER_ADDRESS,
-//   PAIR_ADDRESS,
+//   FACTORY_ADDRESS,
 //   TOKEN0_ADDRESS,
 //   TOKEN1_ADDRESS,
 // } from "../config/addresses";
@@ -22,38 +18,53 @@
 //   const { writeContractAsync } = useWriteContract();
 
 //   const [amountIn, setAmountIn] = useState("");
-//   const [estimatedOut, setEstimatedOut] = useState("0");
+//   const [amountOut, setAmountOut] = useState("0");
 
-//   // 🔹 read reserves from pair
-//   const { data: reserves } = useReadContract({
-//     address: PAIR_ADDRESS,
-//     abi: pairAbi,
-//     functionName: "getReserves",
+//   // Pair address
+//   const { data: pairAddress } = useReadContract({
+//     address: FACTORY_ADDRESS,
+//     abi: factoryAbi,
+//     functionName: "getPair",
+//     args: [TOKEN0_ADDRESS, TOKEN1_ADDRESS],
 //   });
 
+//   // Reserves
+//   const { data: reserves } = useReadContract({
+//     address: pairAddress,
+//     abi: pairAbi,
+//     functionName: "getReserves",
+//     enabled: !!pairAddress && pairAddress !== "0x0000000000000000000000000000000000000000",
+//   });
 
-// useEffect(() => {
-//     if (!amountIn || !reserves) return;
-  
-//     const amountInBN = BigInt(amountIn);
+//   // Expected output calculation
+//   useEffect(() => {
+//     if (!amountIn || !reserves) {
+//       setAmountOut("0");
+//       return;
+//     }
+
 //     const reserveIn = BigInt(reserves[0]);
 //     const reserveOut = BigInt(reserves[1]);
-  
-//     const amountInWithFee = amountInBN * 997n;
-//     const out =
-//       (amountInWithFee * reserveOut) /
-//       (reserveIn * 1000n + amountInWithFee);
-  
-//     setEstimatedOut(out.toString());
+//     const input = BigInt(amountIn);
+
+//     if (input === 0n) {
+//       setAmountOut("0");
+//       return;
+//     }
+
+//     // Uniswap formula with fee
+//     const amountInWithFee = input * 997n;
+//     const numerator = amountInWithFee * reserveOut;
+//     const denominator = reserveIn * 1000n + amountInWithFee;
+//     const output = numerator / denominator;
+
+//     setAmountOut(output.toString());
 //   }, [amountIn, reserves]);
 
-
-
-
-//   // 🔹 swap execution
+//   // Swap function
 //   async function swap() {
 //     try {
-//       // approve token0 → router
+//       // approve token0
 //       await writeContractAsync({
 //         address: TOKEN0_ADDRESS,
 //         abi: erc20Abi,
@@ -68,10 +79,11 @@
 //         functionName: "swapExactTokensForTokens",
 //         args: [
 //           BigInt(amountIn),
-//           0, // minOut (slippage later)
-//           [TOKEN0_ADDRESS, TOKEN1_ADDRESS],
+//           0, 
+//           TOKEN0_ADDRESS,
+//           TOKEN1_ADDRESS,
 //           address,
-//           Math.floor(Date.now() / 1000) + 60 * 5,
+//           Math.floor(Date.now() / 1000) + 60, 
 //         ],
 //       });
 
@@ -82,28 +94,23 @@
 //     }
 //   }
 
+//   if (!pairAddress || pairAddress === "0x0000000000000000000000000000000000000000") {
+//     return <p>No pool exists</p>;
+//   }
+
 //   return (
 //     <div className="p-4 border rounded mt-6">
-//       <h3 className="font-semibold mb-3">Swap</h3>
+//       <h3>Swap</h3>
 
-//       {/* 👇 YAHI HAI onChange */}
 //       <input
-//         className="border p-2 w-full mb-3"
-//         placeholder="Amount In (wei)"
+//         placeholder="Amount In (Token0)"
 //         value={amountIn}
 //         onChange={(e) => setAmountIn(e.target.value)}
 //       />
 
-//       <p className="mb-3">
-//         Estimated Output: <b>{estimatedOut}</b>
-//       </p>
+//       <p>Expected Output (Token1): {amountOut}</p>
 
-//       <button
-//         onClick={swap}
-//         className="bg-green-600 text-white p-2 w-full rounded"
-//       >
-//         Swap
-//       </button>
+//       <button onClick={swap}>Swap</button>
 //     </div>
 //   );
 // }
@@ -112,21 +119,15 @@
 
 
 
-
-
-
-
-
-
-
 import { useState, useEffect } from "react";
-import { useReadContract, useWriteContract, useAccount } from "wagmi";
-import pairAbi from "../abi/UniswapV2Pair.json";
+import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import routerAbi from "../abi/UniswapV2Router.json";
+import factoryAbi from "../abi/UniswapV2Factory.json";
+import pairAbi from "../abi/UniswapV2Pair.json";
 import erc20Abi from "../abi/ERC20.json";
 import {
-  PAIR_ADDRESS,
   ROUTER_ADDRESS,
+  FACTORY_ADDRESS,
   TOKEN0_ADDRESS,
   TOKEN1_ADDRESS,
 } from "../config/addresses";
@@ -136,60 +137,65 @@ export default function Swap() {
   const { writeContractAsync } = useWriteContract();
 
   const [amountIn, setAmountIn] = useState("");
-  const [amountOut, setAmountOut] = useState(0);
-  const [priceImpact, setPriceImpact] = useState(0);
-  const [slippage, setSlippage] = useState(0.5); // %
+  const [expectedOut, setExpectedOut] = useState("0");
+  const [slippage, setSlippage] = useState(1); // %
+  const [deadlineMinutes, setDeadlineMinutes] = useState(5);
 
-  // 🔹 read reserves
-  const { data: reserves } = useReadContract({
-    address: PAIR_ADDRESS,
-    abi: pairAbi,
-    functionName: "getReserves",
-    watch: true,
+  // 1️⃣ Get pair
+  const { data: pair } = useReadContract({
+    address: FACTORY_ADDRESS,
+    abi: factoryAbi,
+    functionName: "getPair",
+    args: [TOKEN0_ADDRESS, TOKEN1_ADDRESS],
   });
 
-  // 🔹 core calculation
-  function calculateSwap(input) {
-    if (!reserves || !input || Number(input) <= 0) {
-      setAmountOut(0);
-      setPriceImpact(0);
+  // 2️⃣ Get reserves
+  const { data: reserves } = useReadContract({
+    address: pair,
+    abi: pairAbi,
+    functionName: "getReserves",
+    query: {
+      enabled:
+        pair &&
+        pair !== "0x0000000000000000000000000000000000000000",
+    },
+  });
+
+  // 3️⃣ Calculate expected output
+  useEffect(() => {
+    if (!amountIn || !reserves) {
+      setExpectedOut("0");
       return;
     }
 
-    const reserveIn = Number(reserves[0]);
-    const reserveOut = Number(reserves[1]);
-    const amountInNum = Number(input);
+    const amountInBN = BigInt(amountIn);
+    const reserve0 = BigInt(reserves[0]);
+    const reserve1 = BigInt(reserves[1]);
 
-    // 🧮 Uniswap V2 formula
-    const amountInWithFee = amountInNum * 997;
-    const numerator = amountInWithFee * reserveOut;
-    const denominator = reserveIn * 1000 + amountInWithFee;
+    if (amountInBN === 0n || reserve0 === 0n || reserve1 === 0n) {
+      setExpectedOut("0");
+      return;
+    }
+
+    // Uniswap formula with fee
+    const amountInWithFee = amountInBN * 997n;
+    const numerator = amountInWithFee * reserve1;
+    const denominator = reserve0 * 1000n + amountInWithFee;
     const out = numerator / denominator;
 
-    setAmountOut(out);
+    setExpectedOut(out.toString());
+  }, [amountIn, reserves]);
 
-    // 📉 price impact
-    const spotPrice = reserveOut / reserveIn;
-    const executionPrice = out / amountInNum;
-    const impact = (1 - executionPrice / spotPrice) * 100;
-
-    setPriceImpact(impact);
-  }
-
-  // 🔹 input handler (IMPORTANT 🔥)
-  function handleInput(e) {
-    const value = e.target.value;
-    setAmountIn(value);
-    calculateSwap(value);
-  }
-
-  // 🔹 swap tx
-  async function executeSwap() {
+  // 4️⃣ Swap
+  async function swap() {
     try {
       const amountOutMin =
-        amountOut * (1 - slippage / 100);
+        (BigInt(expectedOut) * BigInt(100 - slippage)) / 100n;
 
-      // approve token0
+      const deadline =
+        Math.floor(Date.now() / 1000) + deadlineMinutes * 60;
+
+      // approve
       await writeContractAsync({
         address: TOKEN0_ADDRESS,
         abi: erc20Abi,
@@ -204,16 +210,15 @@ export default function Swap() {
         functionName: "swapExactTokensForTokens",
         args: [
           BigInt(amountIn),
-          BigInt(Math.floor(amountOutMin)),
+          amountOutMin,
           TOKEN0_ADDRESS,
           TOKEN1_ADDRESS,
           address,
-          Math.floor(Date.now() / 1000) + 60,
+          BigInt(deadline),
         ],
       });
 
       alert("Swap successful 🚀");
-      setAmountIn("");
     } catch (err) {
       console.error(err);
       alert("Swap failed ❌");
@@ -221,25 +226,32 @@ export default function Swap() {
   }
 
   return (
-    <div style={{ marginTop: "20px" }}>
+    <div className="p-4 border rounded-lg mt-6">
       <h3>Swap</h3>
 
       <input
-        placeholder="Amount In"
+        placeholder="Amount In (Token0)"
         value={amountIn}
-        onChange={handleInput}
+        onChange={(e) => setAmountIn(e.target.value)}
       />
 
-      <p>Estimated Output: {amountOut.toFixed(4)}</p>
-      <p>Price Impact: {priceImpact.toFixed(2)}%</p>
+      <p>Expected Output (Token1): {expectedOut}</p>
 
-      {priceImpact > 5 && (
-        <p style={{ color: "red" }}>
-          ⚠️ High Price Impact
-        </p>
-      )}
+      <hr />
 
-      <button onClick={executeSwap}>Swap</button>
+      <label>Slippage (%)</label>
+      <input
+        value={slippage}
+        onChange={(e) => setSlippage(Number(e.target.value))}
+      />
+
+      <label>Deadline (minutes)</label>
+      <input
+        value={deadlineMinutes}
+        onChange={(e) => setDeadlineMinutes(Number(e.target.value))}
+      />
+
+      <button onClick={swap}>Swap</button>
     </div>
   );
 }
