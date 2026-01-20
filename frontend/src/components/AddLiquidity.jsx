@@ -2,10 +2,8 @@
 import { useState } from "react";
 import { useAccount, useWriteContract } from "wagmi";
 import erc20Abi from "../abi/ERC20.json";
-import erc20Mock from "../abi/ERC20Mock.json"
 import routerAbi from "../abi/UniswapV2Router.json"
-import pairAbi from "../abi/UniswapV2Pair.json";
-import { PAIR_ADDRESS, TOKEN0_ADDRESS, TOKEN1_ADDRESS, ROUTER_ADDRESS } from "../config/addresses";
+import { TOKEN0_ADDRESS, TOKEN1_ADDRESS, ROUTER_ADDRESS } from "../config/addresses";
 
 export default function AddLiquidity() {
   const [amount0, setAmount0] = useState("");
@@ -18,7 +16,6 @@ export default function AddLiquidity() {
 
   async function addLiquidity() {
     try {
-      // token0 approve
       await writeContractAsync({
         address: TOKEN0_ADDRESS,
         abi: erc20Abi,
@@ -26,7 +23,6 @@ export default function AddLiquidity() {
         args: [ROUTER_ADDRESS, BigInt(amount0)],
       });
   
-      // token1 approve
       await writeContractAsync({
         address: TOKEN1_ADDRESS,
         abi: erc20Abi,
@@ -34,12 +30,11 @@ export default function AddLiquidity() {
         args: [ROUTER_ADDRESS, BigInt(amount1)],
       });
   
-      // mint (pair pulls tokens internally)
       await writeContractAsync({
         address: ROUTER_ADDRESS,
         abi: routerAbi,
         functionName: "addLiquidity",
-        args: [BigInt(amount0), BigInt(amount1)],
+        args: [TOKEN0_ADDRESS, TOKEN1_ADDRESS, BigInt(amount0), BigInt(amount1)],
       });
   
       alert("Liquidity added successfully 🚀");
@@ -72,3 +67,73 @@ export default function AddLiquidity() {
     </div>
   );
 }
+
+
+
+
+
+
+// import { useState } from "react";
+// import { useWriteContract } from "wagmi";
+// import erc20Abi from "../abi/ERC20.json";
+// import routerAbi from "../abi/UniswapV2Router.json";
+// import { ROUTER_ADDRESS } from "../config/addresses";
+
+// export default function AddLiquidity({ tokenA, tokenB }) {
+//   const [amountA, setAmountA] = useState("");
+//   const [amountB, setAmountB] = useState("");
+//   const { writeContractAsync } = useWriteContract();
+
+//   async function addLiquidity() {
+//     try {
+//       await writeContractAsync({
+//         address: tokenA,
+//         abi: erc20Abi,
+//         functionName: "approve",
+//         args: [ROUTER_ADDRESS, BigInt(amountA)],
+//       });
+
+//       await writeContractAsync({
+//         address: tokenB,
+//         abi: erc20Abi,
+//         functionName: "approve",
+//         args: [ROUTER_ADDRESS, BigInt(amountB)],
+//       });
+
+//       // await writeContractAsync({
+//       //   address: ROUTER_ADDRESS,
+//       //   abi: routerAbi,
+//       //   functionName: "addLiquidity",
+//       //   args: [amountA, amountB,],
+//       // });
+
+//       await writeContractAsync({
+//         address: ROUTER_ADDRESS,
+//         abi: routerAbi,
+//         functionName: "addLiquidity",
+//         args: [tokenA, tokenB, amountA, amountB,],
+//       });
+
+//       alert("Liquidity added 🚀");
+//     } catch (e) {
+//       console.error(e);
+//       alert("Failed");
+//     }
+//   }
+
+//   return (
+//     <div>
+//       <input
+//         placeholder="Amount A"
+//         value={amountA}
+//         onChange={(e) => setAmountA(e.target.value)}
+//       />
+//       <input
+//         placeholder="Amount B"
+//         value={amountB}
+//         onChange={(e) => setAmountB(e.target.value)}
+//       />
+//       <button onClick={addLiquidity}>Add Liquidity</button>
+//     </div>
+//   );
+// }
