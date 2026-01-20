@@ -205,7 +205,8 @@ export default function Swap() {
         args: [
           BigInt(amountIn),
           BigInt(Math.floor(amountOutMin)),
-          [TOKEN0_ADDRESS, TOKEN1_ADDRESS],
+          TOKEN0_ADDRESS,
+          TOKEN1_ADDRESS,
           address,
           Math.floor(Date.now() / 1000) + 60,
         ],

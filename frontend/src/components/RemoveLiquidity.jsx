@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useWriteContract } from "wagmi"
 import { PAIR_ADDRESS, ROUTER_ADDRESS, TOKEN0_ADDRESS, TOKEN1_ADDRESS } from "../config/addresses";
-import erc20Abi from "../abi/ERC20.json";
 import pairAbi from "../abi/UniswapV2Pair.json"
 import routerAbi from "../abi/UniswapV2Router.json";
 

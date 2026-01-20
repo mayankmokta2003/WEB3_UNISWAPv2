@@ -31,7 +31,9 @@
   {
     "type": "function",
     "name": "burn",
-    "inputs": [{ "name": "to", "type": "address", "internalType": "address" }],
+    "inputs": [
+      { "name": "to", "type": "address", "internalType": "address" }
+    ],
     "outputs": [
       { "name": "amount0", "type": "uint256", "internalType": "uint256" },
       { "name": "amount1", "type": "uint256", "internalType": "uint256" }

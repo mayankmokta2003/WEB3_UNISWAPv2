@@ -14,7 +14,7 @@ interface IUniswapV2Pair {
 
 interface IUniswapV2Factory {
     function createPair(address tokenA, address tokenB) external returns (address pair);
-    function getPair(address tokenA, address tokenB) external view returns (address pair);
+    // function getPair(address tokenA, address tokenB) external view returns (address pair);
 }
 
 contract UniswapV2Router {
@@ -33,6 +33,19 @@ contract UniswapV2Router {
         _;
     }
 
+
+    function _sortTokens(address tokenA, address tokenB)
+    internal
+    pure
+    returns (address token0, address token1)
+{
+    require(tokenA != tokenB, "IDENTICAL_ADDRESSES");
+    (token0, token1) = tokenA < tokenB
+        ? (tokenA, tokenB)
+        : (tokenB, tokenA);
+}
+
+
     function getAmountOut(
         uint256 amountIn,
         uint256 reserveIn,
@@ -47,15 +60,39 @@ contract UniswapV2Router {
     }
 
 
-    function addLiquidity(address tokenA, address tokenB, uint256 amountA, uint256 amountB) external {
-        address pair = _getPair(tokenA, tokenB);
-        if(pair == address(0)){
-            pair = UniswapV2Factory(factory).createPair(tokenA, tokenB);
-        }
-        IERC20(tokenA).transferFrom(msg.sender, pair, amountA);
-        IERC20(tokenB).transferFrom(msg.sender, pair, amountB);
-        IUniswapV2Pair(pair).mint();
+    // function addLiquidity(address tokenA, address tokenB, uint256 amountA, uint256 amountB) external {
+    //     // address pair = _getPair(tokenA, tokenB);
+    //     address pair = UniswapV2Factory(factory).getPair(tokenA, tokenB);
+    //     if(pair == address(0)){
+    //         pair = UniswapV2Factory(factory).createPair(tokenA, tokenB);
+    //     }
+    //     IERC20(tokenA).transferFrom(msg.sender, pair, amountA);
+    //     IERC20(tokenB).transferFrom(msg.sender, pair, amountB);
+    //     IUniswapV2Pair(pair).mint();
+    // }
+
+
+    function addLiquidity(
+    address tokenA,
+    address tokenB,
+    uint256 amountA,
+    uint256 amountB
+) external {
+
+    (address token0, address token1) = _sortTokens(tokenA, tokenB);
+
+    address pair = UniswapV2Factory(factory).getPair(token0, token1);
+
+    if (pair == address(0)) {
+        pair = UniswapV2Factory(factory).createPair(token0, token1);
     }
+
+    IERC20(tokenA).transferFrom(msg.sender, pair, amountA);
+    IERC20(tokenB).transferFrom(msg.sender, pair, amountB);
+
+    IUniswapV2Pair(pair).mint();
+}
+
 
 
 
@@ -64,7 +101,8 @@ contract UniswapV2Router {
         address tokenB,
         uint256 liquidity
     ) external returns (uint256 amount0, uint256 amount1) {
-        address pair = IUniswapV2Factory(factory).getPair(tokenA, tokenB);
+        // address pair = IUniswapV2Factory(factory).getPair(tokenA, tokenB);
+        address pair = UniswapV2Factory(factory).getPair(tokenA, tokenB);
         IERC20(pair).transferFrom(msg.sender, pair, liquidity);
         (amount0, amount1) = IUniswapV2Pair(pair).burn(msg.sender);
     }
@@ -81,7 +119,8 @@ contract UniswapV2Router {
         uint256 deadline
     ) external ensure(deadline) {
 
-        address pair = _getPair(tokenIn, tokenOut);
+        // address pair = _getPair(tokenIn, tokenOut);
+        address pair = UniswapV2Factory(factory).getPair(tokenIn, tokenOut);
         (uint112 r0, uint112 r1, ) = IUniswapV2Pair(pair).getReserves();
         uint amountOut;
         bool zeroForOne = tokenIn < tokenOut;
@@ -101,10 +140,10 @@ contract UniswapV2Router {
 
 
 
-    function _getPair(address tokenA, address tokenB) internal view returns(address pair){
-        pair = IUniswapV2Factory(factory).getPair(tokenA, tokenB);
-        require(pair != address(0), "PAIR_DOES_NOT_EXIST");
-    }
+    // function _getPair(address tokenA, address tokenB) internal view returns(address pair){
+    //     pair = IUniswapV2Factory(factory).getPair(tokenA, tokenB);
+    //     require(pair != address(0), "PAIR_DOES_NOT_EXIST");
+    // }
 
 
 
