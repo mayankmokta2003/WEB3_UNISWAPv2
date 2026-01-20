@@ -52,6 +52,8 @@ export default function AddLiquidity() {
       });
 
       alert("Liquidity added successfully 🚀");
+      setAmountA("");
+      setAmountB("");
     } catch (err) {
       console.error(err);
       alert("Add liquidity failed");
