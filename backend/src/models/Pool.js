@@ -1,16 +1,14 @@
 import mongoose from "mongoose";
 
-const poolSchema = new mongoose.Schema(
-  {
-    token0: String,
-    token1: String,
-    pairAddress: String,
-    reserve0: String,
-    reserve1: String,
-  },
-  {
-    timestamps: true,
-  }
-);
+const poolSchema = new mongoose.Schema({
+  token0: { type: String, required: true },
+  token1: { type: String, required: true },
+  pairAddress: { type: String, required: true },
+  reserve0: { type: String, required: true, unique: true },
+  reserve1: { type: String, required: true, unique: true },
+  addLiquidity: { type: String, default: "0" },
+  volumeToken0: { type: String, default: "0" },
+  volumeToken1: { type: String, default: "0" },
+}, { timestamps: true });
 
 export default mongoose.model("Pool", poolSchema);

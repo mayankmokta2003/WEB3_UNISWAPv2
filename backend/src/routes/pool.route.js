@@ -1,9 +1,11 @@
 import { Router } from "express";
-import { syncPool, getPools } from "../controllers/pool.controller";
+import { getAllPools } from "../controllers/pool.controller.js";
 
 const router = Router();
 
-router.post("/sync", syncPool);
-router.get("/", getPools);
+// router.post("/sync", syncPool);
+// router.get("/", getPools);
+
+router.get("/", getAllPools);
 
 export default router;

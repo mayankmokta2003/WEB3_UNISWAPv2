@@ -1,7 +1,9 @@
-import factoryAbi from "../abi/UniswapV2Factory.json";
+import { loadAbi } from "../utils/loadAbi.js";
+const factoryAbi = loadAbi("src/abi/UniswapV2Factory.json");
 import { client } from "../config/viem.js";
 import Pool from "../models/Pool.js";
 import { FACTORY_ADDRESS } from "../config/addresses.js";
+import { listenToPair } from "./pair.listener.js";
 
 export function listenToFactoryEvents() {
   console.log("Listening to Factory events...");
@@ -20,6 +22,7 @@ export function listenToFactoryEvents() {
           token1,
           pairAddress: pair,
         });
+        listenToPair(pair);
       }
     },
   });
