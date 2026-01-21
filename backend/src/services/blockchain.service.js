@@ -1,5 +1,5 @@
 import { client } from "../config/viem";
-import pairAbi from "../../../frontend/src/abi/UniswapV2Pair.json";
+import pairAbi from "../abi/UniswapV2Pair.json";
 
 export async function getReserves(pairAddress) {
 
