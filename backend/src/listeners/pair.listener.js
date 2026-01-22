@@ -40,7 +40,7 @@ export async function listenToPair(pairAddress) {
     },
   });
 
-   // ✅ STEP 3: Swap EVENTS
+
    client.watchContractEvent({
     address: pairAddress,
     abi: pairAbi,
@@ -56,8 +56,6 @@ export async function listenToPair(pairAddress) {
           { pairAddress },
           {
             $inc: {
-              // volumeToken0: Number(amount0In),
-              // volumeToken1: Number(amount1In),
               volumeToken0: Number(vol0),
               volumeToken1: Number(vol1),
             },

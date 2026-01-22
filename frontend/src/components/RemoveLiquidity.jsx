@@ -19,17 +19,6 @@ export default function RemoveLiquidity() {
 
     async function removeLiquidity() {
         try {
-
-           
-
-
-            // await writeContractAsync({
-            //     address: PAIR_ADDRESS,
-            //     abi: pairAbi,
-            //     functionName: "approve",
-            //     args: [ROUTER_ADDRESS, liquidity]
-            // });
-
             await writeContractAsync({
                 address: pairAddress,
                 abi: pairAbi,
