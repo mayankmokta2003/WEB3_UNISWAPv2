@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { useWriteContract } from "wagmi";
+import { usePublicClient, useWriteContract } from "wagmi";
 import erc20Abi from "../abi/ERC20.json";
 import routerAbi from "../abi/UniswapV2Router.json";
 import {
@@ -14,6 +14,7 @@ export default function AddLiquidity() {
   const [amountB, setAmountB] = useState("");
 
   const { writeContractAsync } = useWriteContract();
+  const publicClient = usePublicClient();
 
   async function addLiquidity() {
     try {
@@ -22,24 +23,31 @@ export default function AddLiquidity() {
         return;
       }
 
-      // ✅ approve tokenA → router
-      await writeContractAsync({
+      const MAX_UINT = BigInt("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+
+      const approveTx0 = await writeContractAsync({
         address: TOKEN0_ADDRESS,
         abi: erc20Abi,
         functionName: "approve",
-        args: [ROUTER_ADDRESS, BigInt(amountA)],
+        args: [ROUTER_ADDRESS, BigInt(MAX_UINT)],
       });
 
-      // ✅ approve tokenB → router
-      await writeContractAsync({
+      await publicClient.waitForTransactionReceipt({
+        hash: approveTx0,
+      });
+
+      const approveTx1 = await writeContractAsync({
         address: TOKEN1_ADDRESS,
         abi: erc20Abi,
         functionName: "approve",
-        args: [ROUTER_ADDRESS, BigInt(amountB)],
+        args: [ROUTER_ADDRESS, BigInt(MAX_UINT)],
       });
 
-      // ✅ router.addLiquidity(tokenA, tokenB, amountA, amountB)
-      await writeContractAsync({
+      await publicClient.waitForTransactionReceipt({
+        hash: approveTx1,
+      });
+
+      const addLiqTx = await writeContractAsync({
         address: ROUTER_ADDRESS,
         abi: routerAbi,
         functionName: "addLiquidity",
@@ -51,6 +59,10 @@ export default function AddLiquidity() {
         ],
       });
 
+      await publicClient.waitForTransactionReceipt({
+        hash: addLiqTx,
+      });
+      
       alert("Liquidity added successfully 🚀");
       setAmountA("");
       setAmountB("");

@@ -60,18 +60,6 @@ contract UniswapV2Router {
     }
 
 
-    // function addLiquidity(address tokenA, address tokenB, uint256 amountA, uint256 amountB) external {
-    //     // address pair = _getPair(tokenA, tokenB);
-    //     address pair = UniswapV2Factory(factory).getPair(tokenA, tokenB);
-    //     if(pair == address(0)){
-    //         pair = UniswapV2Factory(factory).createPair(tokenA, tokenB);
-    //     }
-    //     IERC20(tokenA).transferFrom(msg.sender, pair, amountA);
-    //     IERC20(tokenB).transferFrom(msg.sender, pair, amountB);
-    //     IUniswapV2Pair(pair).mint();
-    // }
-
-
     function addLiquidity(
     address tokenA,
     address tokenB,

@@ -10,7 +10,6 @@ import {
 export default function LPDashboard() {
   const { address } = useAccount();
 
-  // 1️⃣ Get pair address from factory
   const { data: pairAddress } = useReadContract({
     address: FACTORY_ADDRESS,
     abi: factoryAbi,
@@ -18,14 +17,11 @@ export default function LPDashboard() {
     args: [TOKEN0_ADDRESS, TOKEN1_ADDRESS],
   });
 
-  // Guard: pair not created yet
   const pair =
-    pairAddress &&
-    pairAddress !== "0x0000000000000000000000000000000000000000"
+    pairAddress && pairAddress !== "0x0000000000000000000000000000000000000000"
       ? pairAddress
       : null;
 
-  // 2️⃣ Get reserves
   const { data: reserves } = useReadContract({
     address: pair,
     abi: pairAbi,
@@ -35,7 +31,6 @@ export default function LPDashboard() {
     },
   });
 
-  // 3️⃣ User LP balance
   const { data: userLpBalance } = useReadContract({
     address: pair,
     abi: pairAbi,
@@ -46,7 +41,6 @@ export default function LPDashboard() {
     },
   });
 
-  // 4️⃣ Total LP supply
   const { data: totalLpSupply } = useReadContract({
     address: pair,
     abi: pairAbi,
@@ -65,11 +59,8 @@ export default function LPDashboard() {
   const userLP = Number(userLpBalance ?? 0);
   const totalLP = Number(totalLpSupply);
 
-  // 5️⃣ Pool share %
-  const poolShare =
-    totalLP > 0 ? ((userLP / totalLP) * 100).toFixed(4) : "0";
+  const poolShare = totalLP > 0 ? ((userLP / totalLP) * 100).toFixed(4) : "0";
 
-  // 6️⃣ Prices
   const priceToken0 = reserve1 / reserve0;
   const priceToken1 = reserve0 / reserve1;
 
@@ -77,23 +68,35 @@ export default function LPDashboard() {
     <div className="p-4 border rounded-lg mt-6">
       <h3>LP Dashboard</h3>
 
-      <p><strong>Pair Address:</strong> {pair}</p>
+      <p>
+        <strong>Pair Address:</strong> {pair}
+      </p>
 
       <hr />
 
-      <p><strong>Your LP Tokens:</strong> {userLP}</p>
-      <p><strong>Total LP Supply:</strong> {totalLP}</p>
-      <p><strong>Your Pool Share:</strong> {poolShare}%</p>
+      <p>
+        <strong>Your LP Tokens:</strong> {userLP}
+      </p>
+      <p>
+        <strong>Total LP Supply:</strong> {totalLP}
+      </p>
+      <p>
+        <strong>Your Pool Share:</strong> {poolShare}%
+      </p>
 
       <hr />
 
-      <p><strong>Reserves:</strong></p>
+      <p>
+        <strong>Reserves:</strong>
+      </p>
       <p>Token0: {reserve0}</p>
       <p>Token1: {reserve1}</p>
 
       <hr />
 
-      <p><strong>Prices:</strong></p>
+      <p>
+        <strong>Prices:</strong>
+      </p>
       <p>1 Token0 = {priceToken0.toFixed(6)} Token1</p>
       <p>1 Token1 = {priceToken1.toFixed(6)} Token0</p>
     </div>

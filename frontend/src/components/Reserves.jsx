@@ -1,17 +1,11 @@
-
-import { useEffect } from "react";
 import pairAbi from "../abi/UniswapV2Pair.json";
-import erc20Abi from "../abi/ERC20.json";
 import factoryAbi from "../abi/UniswapV2Factory.json";
 import {
   TOKEN0_ADDRESS,
   TOKEN1_ADDRESS,
   FACTORY_ADDRESS,
 } from "../config/addresses";
-import {
-  useReadContract,
-  useWatchContractEvent,
-} from "wagmi";
+import { useReadContract, useWatchContractEvent } from "wagmi";
 
 export default function Reserves() {
   const { data: pairAddress } = useReadContract({
