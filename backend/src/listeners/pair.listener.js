@@ -2,6 +2,7 @@ import { client } from "../config/viem.js";
 import { loadAbi } from "../utils/loadAbi.js";
 const pairAbi = loadAbi("src/abi/UniswapV2Pair.json");
 import Pool from "../models/Pool.js";
+import { calculatePrices } from "../utils/calcPrice.js"
 
 export async function listenToPair(pairAddress) {
   console.log("Listening to Pair:", pairAddress);
@@ -12,11 +13,14 @@ export async function listenToPair(pairAddress) {
     functionName: "getReserves",
   });
 
+  const prices = calculatePrices(reserve0, reserve1);
+
   await Pool.findOneAndUpdate(
     { pairAddress },
     {
       reserve0: reserve0.toString(),
       reserve1: reserve1.toString(),
+      ...prices,
     },
     { upsert: true }
   );
@@ -34,6 +38,7 @@ export async function listenToPair(pairAddress) {
           {
             reserve0: reserve0.toString(),
             reserve1: reserve1.toString(),
+            ...prices,
           }
         );
       }
@@ -67,3 +72,4 @@ export async function listenToPair(pairAddress) {
 
 
 }
+

@@ -5,12 +5,12 @@ const poolSchema = new mongoose.Schema(
     token0: { type: String, required: true },
     token1: { type: String, required: true },
     pairAddress: { type: String, required: true, unique: true, index: true },
-    reserve0: { type: Number, default: "0" },
-    reserve1: { type: Number, default: "0" },
+    reserve0: { type: String, default: "0" },
+    reserve1: { type: String, default: "0" },
     priceToken0InToken1: { type: String, default: "0" },
     priceToken1InToken0: { type: String, default: "0" },
-    volumeToken0: { type: String, default: "0" },
-    volumeToken0: { type: String, default: "0" }
+    volumeToken0: { type: Number, default: "0" },
+    volumeToken1: { type: Number, default: "0" }
   },
   { timestamps: true }
 
