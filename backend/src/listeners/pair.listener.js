@@ -1,11 +1,26 @@
 import { client } from "../config/viem.js";
 import { loadAbi } from "../utils/loadAbi.js";
-// import pairAbi from "../abi/UniswapV2Pair.json";
 const pairAbi = loadAbi("src/abi/UniswapV2Pair.json");
 import Pool from "../models/Pool.js";
 
-export function listenToPair(pairAddress) {
+export async function listenToPair(pairAddress) {
   console.log("Listening to Pair:", pairAddress);
+
+  const [reserve0, reserve1] = await client.readContract({
+    address: pairAddress,
+    abi: pairAbi,
+    functionName: "getReserves",
+  });
+
+  await Pool.findOneAndUpdate(
+    { pairAddress },
+    {
+      reserve0: reserve0.toString(),
+      reserve1: reserve1.toString(),
+    },
+    { upsert: true }
+  );
+
 
   client.watchContractEvent({
     address: pairAddress,
@@ -25,23 +40,32 @@ export function listenToPair(pairAddress) {
     },
   });
 
-  client.watchContractEvent({
+   // ✅ STEP 3: Swap EVENTS
+   client.watchContractEvent({
     address: pairAddress,
     abi: pairAbi,
     eventName: "Swap",
     onLogs: async (logs) => {
       for (const log of logs) {
         const { amount0In, amount1In, amount0Out, amount1Out } = log.args;
-        Pool.findOneAndUpdate(
+
+        const vol0 = amount0In > 0n ? amount0In : amount0Out;
+        const vol1 = amount1In > 0n ? amount1In : amount1Out;
+  
+        await Pool.findOneAndUpdate(
           { pairAddress },
           {
             $inc: {
-              volumeToken0: amount0In.toString(),
-              volumeToken1: amount1In.toString(),
+              // volumeToken0: Number(amount0In),
+              // volumeToken1: Number(amount1In),
+              volumeToken0: Number(vol0),
+              volumeToken1: Number(vol1),
             },
           }
         );
       }
     },
   });
+
+
 }

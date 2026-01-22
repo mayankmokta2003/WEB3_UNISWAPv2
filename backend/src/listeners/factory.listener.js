@@ -18,9 +18,13 @@ export function listenToFactoryEvents() {
         console.log("Pair created:", pair);
 
         await Pool.create({
+          pairAddress: pair,
           token0,
           token1,
-          pairAddress: pair,
+          reserve0: "0",
+          reserve1: "0",
+          volumeToken0: "0",
+          volumeToken1: "0",
         });
         listenToPair(pair);
       }
