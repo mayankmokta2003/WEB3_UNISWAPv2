@@ -128,11 +128,4 @@ contract UniswapV2Router {
 
 
 
-    // function _getPair(address tokenA, address tokenB) internal view returns(address pair){
-    //     pair = IUniswapV2Factory(factory).getPair(tokenA, tokenB);
-    //     require(pair != address(0), "PAIR_DOES_NOT_EXIST");
-    // }
-
-
-
 }
