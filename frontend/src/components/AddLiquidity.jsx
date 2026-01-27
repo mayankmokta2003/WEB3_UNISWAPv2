@@ -8,6 +8,7 @@ import {
   TOKEN1_ADDRESS,
   ROUTER_ADDRESS,
 } from "../config/addresses";
+import Reserves from "./Reserves";
 
 export default function AddLiquidity() {
   const [amountA, setAmountA] = useState("");
@@ -100,10 +101,10 @@ export default function AddLiquidity() {
 
 
 
-    <div className="flex flex-col gap-20">
+    <div className="flex flex-col justify-center items-center gap-10">
 
       <div>
-        <h1 className="text-5xl">ADD LIQUIDITY</h1>
+        <h1 className="text-5xl">ADD & REMOVE LIQUIDITY</h1>
       </div>
 
 
@@ -128,6 +129,11 @@ export default function AddLiquidity() {
 
     <button onClick={addLiquidity} className="w-100 h-10 rounded-2xl bg-fuchsia-800 mb-5">Add liquidity</button>
 
+    </div>
+
+
+    <div>
+      <Reserves />
     </div>
 
     </div>

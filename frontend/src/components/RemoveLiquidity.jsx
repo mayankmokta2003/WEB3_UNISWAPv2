@@ -21,6 +21,9 @@ export default function RemoveLiquidity() {
   });
 
   async function removeLiquidity() {
+    if(!liquidity){
+      return alert("Please enter LP amount");
+    }
     try {
       await writeContractAsync({
         address: pairAddress,
@@ -43,14 +46,37 @@ export default function RemoveLiquidity() {
   }
 
   return (
-    <div>
-      <h2>REMOVE LIQUIDITY</h2>
-      <input
-        placeholder="LP tokens"
-        value={liquidity}
-        onChange={(e) => setLiquidity(e.target.value)}
+    // <div>
+    //   <h2>REMOVE LIQUIDITY</h2>
+    //   <input
+    //     placeholder="LP tokens"
+    //     value={liquidity}
+    //     onChange={(e) => setLiquidity(e.target.value)}
+    //   />
+    //   <button onClick={removeLiquidity}>Remove Liquidity</button>
+    // </div>
+
+
+
+
+    <div className="flex flex-col items-center justify-center border-amber-100 bg-fuchsia-500 rounded-2xl space-y-7 w-120">
+
+      <h1>Remove Liquidity</h1>
+
+      <input 
+      className="w-100 h-10 rounded-2xl bg-fuchsia-800"
+      placeholder="LP tokens"
+           value={liquidity}
+           onChange={(e) => setLiquidity(e.target.value)}
       />
-      <button onClick={removeLiquidity}>Remove Liquidity</button>
+
+      <button onClick={removeLiquidity} className="w-100 h-10 rounded-2xl bg-fuchsia-800 mb-5">Remove Liquidity</button>
+
     </div>
+
+
+
+
+
   );
 }

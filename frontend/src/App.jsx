@@ -20,7 +20,7 @@ function App() {
 //         </h2>
 //         {/* <WalletConnect /> */}
 //         <Reserves />
-//         <AddLiquidity />
+//         {/* <AddLiquidity /> */}
 //         <RemoveLiquidity />
 //         <Swap />
 //         <LPDashboard />
@@ -42,15 +42,14 @@ function App() {
 
 
 
-<div className="bg-black text-white flex flex-col items-center justify-center gap-20 mb-100">
+<div className="bg-black text-white flex flex-col items-center justify-center gap-10 mb-100">
     <Navbar />
-        {/* <Reserves /> */}
         <AddLiquidity />
-        {/* <RemoveLiquidity />
+        <RemoveLiquidity />
         <Swap />
-        <LPDashboard />
-        <Pools /> */}
-  </div>
+        {/* <LPDashboard />
+        <Pools />  */}
+  </div> 
 
 
 
