@@ -11,34 +11,46 @@ function App() {
 
   return (
 
-  // <div className="min-h-screen bg-gray-100 p-8">
-  //     <div className="max-w-md mx-auto bg-white p-6 rounded-xl shadow">
-  //       <h2 className="text-2xl font-bold mb-4 text-center">
-  //         Uniswap V2 Clone
-  //       </h2>
-  //        {/* <Navbar /> */}
-  //       <WalletConnect />
-  //       <Reserves />
-  //       <AddLiquidity />
-  //       <RemoveLiquidity />
-  //       <Swap />
-  //       <LPDashboard />
-  //       <Pools />
-  //     </div>
-  //   </div>
+//   <div>
+//     <Navbar />
+// <div className="min-h-screen bg-gray-100 p-8">
+//       <div className="max-w-md mx-auto bg-white p-6 rounded-xl shadow">
+//         <h2 className="text-2xl font-bold mb-4 text-center">
+//           Uniswap V2 Clone
+//         </h2>
+//         {/* <WalletConnect /> */}
+//         <Reserves />
+//         <AddLiquidity />
+//         <RemoveLiquidity />
+//         <Swap />
+//         <LPDashboard />
+//         <Pools />
+//       </div>
+//     </div>
+
+
+
+//   </div>
 
 
 
 
 
 
-  <div>
 
-<Navbar />
 
+
+
+
+<div className="bg-black text-white flex flex-col items-center justify-center gap-20 mb-100">
+    <Navbar />
+        {/* <Reserves /> */}
+        <AddLiquidity />
+        {/* <RemoveLiquidity />
+        <Swap />
+        <LPDashboard />
+        <Pools /> */}
   </div>
-
-
 
 
 

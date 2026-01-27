@@ -73,23 +73,75 @@ export default function AddLiquidity() {
   }
 
   return (
-    <div>
-      <h3>Add Liquidity</h3>
+    // <div>
+    //   <h3>Add Liquidity</h3>
 
-      <input
-        placeholder="Amount Token0"
-        value={amountA}
-        onChange={(e) => setAmountA(e.target.value)}
-      />
+    //   <input
+    //     placeholder="Amount Token0"
+    //     value={amountA}
+    //     onChange={(e) => setAmountA(e.target.value)}
+    //   />
 
-      <input
-        placeholder="Amount Token1"
-        value={amountB}
-        onChange={(e) => setAmountB(e.target.value)}
-      />
+    //   <input
+    //     placeholder="Amount Token1"
+    //     value={amountB}
+    //     onChange={(e) => setAmountB(e.target.value)}
+    //   />
 
-      <button onClick={addLiquidity}>Add Liquidity</button>
+    //   <button onClick={addLiquidity}>Add Liquidity</button>
+    // </div>
+
+
+
+
+
+
+
+
+
+
+    <div className="flex flex-col gap-20">
+
+      <div>
+        <h1 className="text-5xl">ADD LIQUIDITY</h1>
+      </div>
+
+
+    <div className="flex flex-col items-center justify-center border-amber-100 bg-fuchsia-500 rounded-2xl space-y-7 w-120">
+
+    <h1>Add liquidity from here  UNISWAPv2</h1>
+
+    <input 
+    className=" w-100 h-10 rounded-2xl bg-fuchsia-800"
+    placeholder="Token0 Amount"
+    value={amountA}
+    onChange={(e) => setAmountA(e.target.value)}
+    />
+
+
+    <input 
+    className="w-100 h-10 rounded-2xl bg-fuchsia-800"
+    placeholder="Token1 Amount"
+    value={amountB}
+    onChange={(e) => setAmountB(e.target.value)}
+    />
+
+    <button onClick={addLiquidity} className="w-100 h-10 rounded-2xl bg-fuchsia-800 mb-5">Add liquidity</button>
+
     </div>
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+
   );
 }
 
