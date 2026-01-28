@@ -20,9 +20,9 @@ export default function Navbar() {
         </div>
 
         <div className="flex flex-row gap-20">
-          <h3 className="cursor-pointer">helooo</h3>
-          <h3 className="cursor-pointer">helooo</h3>
-          <h3 className="cursor-pointer">helooo</h3>
+          <h3 className="cursor-pointer">Trade</h3>
+          <h3 className="cursor-pointer">Explore</h3>
+          <h3 className="cursor-pointer">Pool</h3>
         </div>
       </div>
 

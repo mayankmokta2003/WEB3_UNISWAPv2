@@ -47,8 +47,8 @@ function App() {
         <AddLiquidity />
         <RemoveLiquidity />
         <Swap />
-        {/* <LPDashboard />
-        <Pools />  */}
+        <LPDashboard />
+        <Pools /> 
   </div> 
 
 

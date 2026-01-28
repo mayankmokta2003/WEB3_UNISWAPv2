@@ -65,7 +65,52 @@ export default function LPDashboard() {
   const priceToken1 = reserve0 / reserve1;
 
   return (
-    <div className="p-4 border rounded-lg mt-6">
+    // <div className="p-4 border rounded-lg mt-6">
+    //   <h3>LP Dashboard</h3>
+
+    //   <p>
+    //     <strong>Pair Address:</strong> {pair}
+    //   </p>
+
+    //   <hr />
+
+    //   <p>
+    //     <strong>Your LP Tokens:</strong> {userLP}
+    //   </p>
+    //   <p>
+    //     <strong>Total LP Supply:</strong> {totalLP}
+    //   </p>
+    //   <p>
+    //     <strong>Your Pool Share:</strong> {poolShare}%
+    //   </p>
+
+    //   <hr />
+
+    //   <p>
+    //     <strong>Reserves:</strong>
+    //   </p>
+    //   <p>Token0: {reserve0}</p>
+    //   <p>Token1: {reserve1}</p>
+
+    //   <hr />
+
+    //   <p>
+    //     <strong>Prices:</strong>
+    //   </p>
+    //   <p>1 Token0 = {priceToken0.toFixed(6)} Token1</p>
+    //   <p>1 Token1 = {priceToken1.toFixed(6)} Token0</p>
+    // </div>
+
+
+
+
+
+
+
+
+
+
+    <div className="p-4 border rounded-lg mt-6 ">
       <h3>LP Dashboard</h3>
 
       <p>
@@ -74,23 +119,8 @@ export default function LPDashboard() {
 
       <hr />
 
-      <p>
-        <strong>Your LP Tokens:</strong> {userLP}
-      </p>
-      <p>
-        <strong>Total LP Supply:</strong> {totalLP}
-      </p>
-      <p>
-        <strong>Your Pool Share:</strong> {poolShare}%
-      </p>
 
       <hr />
-
-      <p>
-        <strong>Reserves:</strong>
-      </p>
-      <p>Token0: {reserve0}</p>
-      <p>Token1: {reserve1}</p>
 
       <hr />
 
