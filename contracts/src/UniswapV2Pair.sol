@@ -109,8 +109,10 @@ function mint() external returns (uint256 liquidity) {
         address _token1 = token1;
         uint256 balance0 = IERC20(_token0).balanceOf(address(this));
         uint256 balance1 = IERC20(_token1).balanceOf(address(this));
-        uint256 _totalSupply = totalSupply();
         uint256 liquidity = balanceOf(address(this));
+        require(liquidity > 0, "NO_LP_RECEIVED");
+        uint256 _totalSupply = totalSupply();
+        
         amount0 = (liquidity * balance0) / _totalSupply;
         amount1 = (liquidity * balance1) / _totalSupply;
         require(amount0 > 0 && amount1 > 0, "INSUFFICIENT_LIQUIDITY_BURNED");

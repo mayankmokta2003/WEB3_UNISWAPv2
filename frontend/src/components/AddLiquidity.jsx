@@ -144,3 +144,95 @@ export default function AddLiquidity() {
 
 
 
+
+
+
+
+
+
+
+
+
+
+// import { useState } from "react";
+// import { useWriteContract, usePublicClient, useAccount } from "wagmi";
+// import erc20Abi from "../abi/ERC20.json";
+// import routerAbi from "../abi/UniswapV2Router.json";
+// import {
+//   TOKEN0_ADDRESS,
+//   TOKEN1_ADDRESS,
+//   ROUTER_ADDRESS,
+// } from "../config/addresses";
+
+// export default function AddLiquidity() {
+//   const [amountA, setAmountA] = useState("");
+//   const [amountB, setAmountB] = useState("");
+
+//   const { address } = useAccount(); // ✅ IMPORTANT
+//   const publicClient = usePublicClient();
+//   const { writeContractAsync } = useWriteContract();
+
+//   async function addLiquidity() {
+//     try {
+//       if (!address) return alert("Wallet not connected");
+//       if (!amountA || !amountB) return alert("Enter amounts");
+
+//       const a = BigInt(amountA);
+//       const b = BigInt(amountB);
+
+//       // 1️⃣ approve token0
+//       const tx1 = await writeContractAsync({
+//         address: TOKEN0_ADDRESS,
+//         abi: erc20Abi,
+//         functionName: "approve",
+//         args: [ROUTER_ADDRESS, a],
+//       });
+
+//       await publicClient.waitForTransactionReceipt({
+//         hash: tx1,
+//         confirmations: 1,
+//       });
+
+//       // 2️⃣ approve token1
+//       const tx2 = await writeContractAsync({
+//         address: TOKEN1_ADDRESS,
+//         abi: erc20Abi,
+//         functionName: "approve",
+//         args: [ROUTER_ADDRESS, b],
+//       });
+
+//       await publicClient.waitForTransactionReceipt({
+//         hash: tx2,
+//         confirmations: 1,
+//       });
+
+//       // 3️⃣ add liquidity
+//       const tx3 = await writeContractAsync({
+//         address: ROUTER_ADDRESS,
+//         abi: routerAbi,
+//         functionName: "addLiquidity",
+//         args: [TOKEN0_ADDRESS, TOKEN1_ADDRESS, a, b],
+//       });
+
+//       await publicClient.waitForTransactionReceipt({
+//         hash: tx3,
+//         confirmations: 1,
+//       });
+
+//       alert("Liquidity added successfully 🚀");
+//       setAmountA("");
+//       setAmountB("");
+//     } catch (err) {
+//       console.error("ADD LIQ ERROR:", err);
+//       alert("Add liquidity failed");
+//     }
+//   }
+
+//   return (
+//     <div className="bg-white text-black">
+//       <input value={amountA} onChange={(e) => setAmountA(e.target.value)} className="bg-blue-400"/>
+//       <input value={amountB} onChange={(e) => setAmountB(e.target.value)} className="bg-blue-400"/>
+//       <button onClick={addLiquidity}>Add Liquidity</button>
+//     </div>
+//   );
+// }

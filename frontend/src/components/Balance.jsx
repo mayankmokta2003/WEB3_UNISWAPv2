@@ -32,6 +32,7 @@ export default function Balance(){
     return(
 
         <div>
+            <h1>helooooo</h1>
 
             <p>REAL BALANCE: {RealBalance}</p>
             <p>USER BALANCE: {userBalance}</p>

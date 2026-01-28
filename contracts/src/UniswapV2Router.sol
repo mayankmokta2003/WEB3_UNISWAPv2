@@ -3,17 +3,23 @@
 pragma solidity ^0.8.20;
 
 import {IERC20} from "../lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
-import { UniswapV2Factory } from "./UniswapV2Factory.sol";
+import {UniswapV2Factory} from "./UniswapV2Factory.sol";
 
 interface IUniswapV2Pair {
     function mint() external returns (uint256);
+
     function swap(uint amount0Out, uint amount1Out, address to) external;
+
     function getReserves() external view returns (uint112, uint112, uint32);
-    function burn(address to) external returns(uint256, uint256);
+
+    function burn(address to) external returns (uint256, uint256);
 }
 
 interface IUniswapV2Factory {
-    function createPair(address tokenA, address tokenB) external returns (address pair);
+    function createPair(
+        address tokenA,
+        address tokenB
+    ) external returns (address pair);
     // function getPair(address tokenA, address tokenB) external view returns (address pair);
 }
 
@@ -33,18 +39,15 @@ contract UniswapV2Router {
         _;
     }
 
-
-    function _sortTokens(address tokenA, address tokenB)
-    internal
-    pure
-    returns (address token0, address token1)
-{
-    require(tokenA != tokenB, "IDENTICAL_ADDRESSES");
-    (token0, token1) = tokenA < tokenB
-        ? (tokenA, tokenB)
-        : (tokenB, tokenA);
-}
-
+    function _sortTokens(
+        address tokenA,
+        address tokenB
+    ) internal pure returns (address token0, address token1) {
+        require(tokenA != tokenB, "IDENTICAL_ADDRESSES");
+        (token0, token1) = tokenA < tokenB
+            ? (tokenA, tokenB)
+            : (tokenB, tokenA);
+    }
 
     function getAmountOut(
         uint256 amountIn,
@@ -59,44 +62,51 @@ contract UniswapV2Router {
             (reserveIn * 1000 + amountInWithFees);
     }
 
-
     function addLiquidity(
-    address tokenA,
-    address tokenB,
-    uint256 amountA,
-    uint256 amountB
-) external {
+        address tokenA,
+        address tokenB,
+        uint256 amountA,
+        uint256 amountB
+    ) external {
+        (address token0, address token1) = _sortTokens(tokenA, tokenB);
 
-    (address token0, address token1) = _sortTokens(tokenA, tokenB);
+        address pair = UniswapV2Factory(factory).getPair(token0, token1);
 
-    address pair = UniswapV2Factory(factory).getPair(token0, token1);
+        if (pair == address(0)) {
+            pair = UniswapV2Factory(factory).createPair(token0, token1);
+        }
 
-    if (pair == address(0)) {
-        pair = UniswapV2Factory(factory).createPair(token0, token1);
+        IERC20(tokenA).transferFrom(msg.sender, pair, amountA);
+        IERC20(tokenB).transferFrom(msg.sender, pair, amountB);
+
+        IUniswapV2Pair(pair).mint();
     }
 
-    IERC20(tokenA).transferFrom(msg.sender, pair, amountA);
-    IERC20(tokenB).transferFrom(msg.sender, pair, amountB);
-
-    IUniswapV2Pair(pair).mint();
-}
-
-
-
+    // function removeLiquidity(
+    //     address tokenA,
+    //     address tokenB,
+    //     uint256 liquidity
+    // ) external returns (uint256 amount0, uint256 amount1) {
+    //     // address pair = IUniswapV2Factory(factory).getPair(tokenA, tokenB);
+    //     address pair = UniswapV2Factory(factory).getPair(tokenA, tokenB);
+    //     IERC20(pair).transferFrom(msg.sender, pair, liquidity);
+    //     (amount0, amount1) = IUniswapV2Pair(pair).burn(msg.sender);
+    // }
 
     function removeLiquidity(
         address tokenA,
         address tokenB,
         uint256 liquidity
     ) external returns (uint256 amount0, uint256 amount1) {
-        // address pair = IUniswapV2Factory(factory).getPair(tokenA, tokenB);
+        require(liquidity > 0, "INVALID_LIQUIDITY");
         address pair = UniswapV2Factory(factory).getPair(tokenA, tokenB);
+        require(pair != address(0), "PAIR_NOT_FOUND");
+        uint256 userLpBalance = IERC20(pair).balanceOf(msg.sender);
+        require(userLpBalance >= liquidity, "NOT_ENOUGH_LP");
         IERC20(pair).transferFrom(msg.sender, pair, liquidity);
         (amount0, amount1) = IUniswapV2Pair(pair).burn(msg.sender);
+        require(amount0 > 0 && amount1 > 0, "INSUFFICIENT_BURN");
     }
-
-
-
 
     function swapExactTokensForTokens(
         uint256 amountIn,
@@ -106,7 +116,6 @@ contract UniswapV2Router {
         address to,
         uint256 deadline
     ) external ensure(deadline) {
-
         // address pair = _getPair(tokenIn, tokenOut);
         address pair = UniswapV2Factory(factory).getPair(tokenIn, tokenOut);
         (uint112 r0, uint112 r1, ) = IUniswapV2Pair(pair).getReserves();
@@ -125,7 +134,4 @@ contract UniswapV2Router {
             IUniswapV2Pair(pair).swap(amountOut, 0, to);
         }
     }
-
-
-
 }

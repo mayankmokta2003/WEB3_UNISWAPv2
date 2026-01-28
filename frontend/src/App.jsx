@@ -39,7 +39,7 @@ function App() {
         <RemoveLiquidity />
         <Swap />
         <LPDashboard />
-        {/* <Balance /> */}
+        <Balance />
         {/* <Pools />  */}
   </div> 
 
