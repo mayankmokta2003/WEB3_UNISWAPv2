@@ -30,7 +30,7 @@ export default function AddLiquidity() {
         address: TOKEN0_ADDRESS,
         abi: erc20Abi,
         functionName: "approve",
-        args: [ROUTER_ADDRESS, BigInt(MAX_UINT)],
+        args: [ROUTER_ADDRESS, BigInt(100000)],
       });
 
       await publicClient.waitForTransactionReceipt({
@@ -41,7 +41,7 @@ export default function AddLiquidity() {
         address: TOKEN1_ADDRESS,
         abi: erc20Abi,
         functionName: "approve",
-        args: [ROUTER_ADDRESS, BigInt(MAX_UINT)],
+        args: [ROUTER_ADDRESS, BigInt(1000000)],
       });
 
       await publicClient.waitForTransactionReceipt({
@@ -137,15 +137,6 @@ export default function AddLiquidity() {
     </div>
 
     </div>
-
-
-
-
-
-
-
-
-
 
 
   );

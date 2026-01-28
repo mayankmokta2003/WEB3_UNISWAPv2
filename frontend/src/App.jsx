@@ -6,6 +6,7 @@ import RemoveLiquidity from "./components/RemoveLiquidity";
 import Swap from "./components/Swap";
 import LPDashboard from "./components/LPDashboard";
 import Pools from "./components/Pools";
+import Balance from "./components/Balance";
 
 function App() {
 
@@ -32,35 +33,17 @@ function App() {
 
 //   </div>
 
-
-
-
-
-
-
-
-
-
-
-<div className="bg-black text-white flex flex-col items-center justify-center gap-10 mb-100">
+<div className="bg-black text-white flex flex-col items-center justify-center gap-10">
     <Navbar />
         <AddLiquidity />
         <RemoveLiquidity />
         <Swap />
         <LPDashboard />
-        <Pools /> 
+        {/* <Balance /> */}
+        {/* <Pools />  */}
   </div> 
 
-
-
-
-   
   )
 }
 
 export default App;
-
-
-
-
-

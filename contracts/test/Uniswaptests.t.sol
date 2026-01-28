@@ -97,7 +97,32 @@ contract Uniswaptests is Test{
         vm.stopPrank();
     }
 
+    function testGetAmountOutWorks() external {
+        uint256 reserveIn = 120;
+        uint256 reserveOut = 180;
+        uint256 amountIn = 20;
+        uint256 amountOut = router.getAmountOut(amountIn, reserveIn, reserveOut);
+        assertEq(amountOut, 25);
+    }
 
+
+    function testPairFunctionsWorks() external{
+        ERC20Mock tokenA = new ERC20Mock("taaa", "ta");
+        ERC20Mock tokenB = new ERC20Mock("tbbb", "tb");
+        UniswapV2Pair pair = new UniswapV2Pair();
+        pair.initialize(address(tokenA), address(tokenB));
+        uint256 amount = 100 ether;
+        tokenA.mint(address(this), amount);
+        tokenB.mint(address(this), amount);
+        tokenA.transfer(address(pair), amount);
+        tokenB.transfer(address(pair), amount);
+        uint256 liq = pair.mint();
+        uint256 lpBal = pair.balanceOf(address(this));
+        assert(lpBal == liq);
+        pair.transfer(address(pair), lpBal);
+        pair.burn(address(this));
+        assertEq(pair.balanceOf(address(this)), 0);
+    }
 
     
 
