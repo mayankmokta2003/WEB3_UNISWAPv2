@@ -1,10 +1,5 @@
-
 import { useEffect, useState } from "react";
-import {
-  useAccount,
-  useReadContract,
-  useWriteContract,
-} from "wagmi";
+import { useAccount, useReadContract, useWriteContract } from "wagmi";
 
 import routerAbi from "../abi/UniswapV2Router.json";
 import factoryAbi from "../abi/UniswapV2Factory.json";
@@ -64,13 +59,11 @@ export default function Swap() {
 
     const out = numerator / denominator;
 
-    const minOut =
-      (out * BigInt(100 - slippage)) / 100n;
+    const minOut = (out * BigInt(100 - slippage)) / 100n;
 
     setExpectedOut(out);
     setAmountOutMin(minOut);
   }, [amountIn, reserves, slippage]);
-
 
   async function swap() {
     try {
@@ -83,7 +76,6 @@ export default function Swap() {
         args: [ROUTER_ADDRESS, BigInt(amountIn)],
       });
 
-  
       await writeContractAsync({
         address: ROUTER_ADDRESS,
         abi: routerAbi,
@@ -106,144 +98,53 @@ export default function Swap() {
     }
   }
 
-
   return (
-    // <div style={{ border: "1px solid #444", padding: 16, marginTop: 20 }}>
-    //   <h3>Swap Token0 → Token1</h3>
-
-    //   <input
-    //     type="number"
-    //     placeholder="Amount In (wei)"
-    //     value={amountIn}
-    //     onChange={(e) => setAmountIn(e.target.value)}
-    //   />
-
-    //   <div style={{ marginTop: 10 }}>
-    //     <label>Slippage tolerance (%)</label>
-    //     <input
-    //       type="number"
-    //       value={slippage}
-    //       onChange={(e) => setSlippage(Number(e.target.value))}
-    //       min="0"
-    //       step="0.1"
-    //     />
-    //   </div>
-
-    //   <div style={{ marginTop: 10 }}>
-    //     <p>
-    //       Expected output:{" "}
-    //       {expectedOut ? expectedOut.toString() : "-"}
-    //     </p>
-    //     <p>
-    //       Minimum received:{" "}
-    //       {amountOutMin ? amountOutMin.toString() : "-"}
-    //     </p>
-    //   </div>
-
-    //   <button
-    //     onClick={swap}
-    //     disabled={!pairAddress || !amountOutMin}
-    //   >
-    //     Swap
-    //   </button>
-
-    //   {pairAddress ===
-    //     "0x0000000000000000000000000000000000000000" && (
-    //     <p style={{ color: "red" }}>
-    //       No pool exists for this pair
-    //     </p>
-    //   )}
-    // </div>
-
-
-
-
-
     <div className="flex flex-col justify-center items-center gap-10">
-
-      
-        <h1 className="text-5xl">Swap anytime, anywhere.</h1>
-     
-
-
+      <h1 className="text-5xl">Swap anytime, anywhere.</h1>
 
       <div className="flex flex-col justify-center items-center space-y-7 bg-purple-800 w-120 rounded-2xl p-4">
         <h3>swap Token0 to Token1</h3>
 
-       <input
-       className="w-100 h-10 bg-purple-500 rounded-2xl"
-       type="number"
-        placeholder="Amount In (wei)"
-       value={amountIn}
-        onChange={(e) => setAmountIn(e.target.value)}
-      />
-
-   <div style={{ marginTop: 10 }}>
-         <label>Slippage tolerance (%): </label>
-         <input
-         className="h-8 w-56 bg-purple-500 rounded-xl"
+        <input
+          className="w-100 h-10 bg-purple-500 rounded-2xl"
           type="number"
-          value={slippage}
-          onChange={(e) => setSlippage(Number(e.target.value))}
-          min="0"
-          step="0.1"
+          placeholder="Amount In (wei)"
+          value={amountIn}
+          onChange={(e) => setAmountIn(e.target.value)}
         />
+
+        <div style={{ marginTop: 10 }}>
+          <label>Slippage tolerance (%): </label>
+          <input
+            className="h-8 w-56 bg-purple-500 rounded-xl"
+            type="number"
+            value={slippage}
+            onChange={(e) => setSlippage(Number(e.target.value))}
+            min="0"
+            step="0.1"
+          />
+        </div>
+
+        <div className="">
+          {amountIn ? (
+            <p className=" ">Expected Amount: {expectedOut}</p>
+          ) : (
+            <p className="relative right-32">Expected Amount: </p>
+          )}
+        </div>
+
+        <button
+          className="h-10 w-100 bg-purple-500 rounded-2xl"
+          onClick={swap}
+          disabled={!pairAddress || !amountOutMin}
+        >
+          Swap
+        </button>
+
+        {pairAddress === "0x0000000000000000000000000000000000000000" && (
+          <p style={{ color: "red" }}>No pool exists for this pair</p>
+        )}
       </div>
-
-      
-      {/* <p>
-          Expected output:{" "}
-       {expectedOut ? 
-       expectedOut.toString() : "-"}
-       </p> */}
-
-       <div className=""> 
-
-       { amountIn ? (
-        <p className=" ">Expected Amount: {expectedOut}</p>
-       ) : (
-        <p className="relative right-32">Expected Amount: </p>
-       )}
-
-       </div>
-
-
-       
-
-
-
-
-         <button className="h-10 w-100 bg-purple-500 rounded-2xl"
-        onClick={swap}
-        disabled={!pairAddress || !amountOutMin}
-      >
-        Swap
-      </button>
-
-        {pairAddress ===
-        "0x0000000000000000000000000000000000000000" && (
-        <p style={{ color: "red" }}>
-          No pool exists for this pair
-        </p>
-      )}
-
-
-
-        
-
-
-      </div>
-
-      
     </div>
-
-
-
-
-
-
-
   );
 }
-
-

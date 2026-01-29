@@ -5,10 +5,6 @@ pragma solidity ^0.8.20;
 import {IERC20} from "../lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 import {UniswapV2ERC20} from "./UniswapV2ERC20.sol";
 
-// interface IERC20 {
-//     function balanceOf(address) external view returns (uint);
-// }
-
 contract UniswapV2Pair is UniswapV2ERC20 {
     error AlreadyInitialized();
     error ZeroAddress();
@@ -70,7 +66,6 @@ contract UniswapV2Pair is UniswapV2ERC20 {
 
 function mint() external returns (uint256 liquidity) {
     (uint112 _reserve0, uint112 _reserve1, ) = getReserves();
-
     uint256 balance0 = IERC20(token0).balanceOf(address(this));
     uint256 balance1 = IERC20(token1).balanceOf(address(this));
 
@@ -87,9 +82,7 @@ function mint() external returns (uint256 liquidity) {
             (amount1 * totalSupply()) / _reserve1
         );
     }
-
     require(liquidity > 0, "INSUFFICIENT_LIQUIDITY_MINTED");
-
     _mintLp(msg.sender, liquidity);
     _update(balance0, balance1);
 
@@ -112,7 +105,6 @@ function mint() external returns (uint256 liquidity) {
         uint256 liquidity = balanceOf(address(this));
         require(liquidity > 0, "NO_LP_RECEIVED");
         uint256 _totalSupply = totalSupply();
-        
         amount0 = (liquidity * balance0) / _totalSupply;
         amount1 = (liquidity * balance1) / _totalSupply;
         require(amount0 > 0 && amount1 > 0, "INSUFFICIENT_LIQUIDITY_BURNED");
@@ -124,6 +116,8 @@ function mint() external returns (uint256 liquidity) {
         _update(balance0, balance1);
         emit Burn(msg.sender, amount0, amount1, to);
     }
+
+
 
 
     function swap(uint256 amount0Out, uint256 amount1Out, address to) external {

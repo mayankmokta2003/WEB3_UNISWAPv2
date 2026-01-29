@@ -10,10 +10,9 @@ const poolSchema = new mongoose.Schema(
     priceToken0InToken1: { type: String, default: "0" },
     priceToken1InToken0: { type: String, default: "0" },
     volumeToken0: { type: Number, default: "0" },
-    volumeToken1: { type: Number, default: "0" }
+    volumeToken1: { type: Number, default: "0" },
   },
   { timestamps: true }
-
 );
 
 export default mongoose.model("Pool", poolSchema);

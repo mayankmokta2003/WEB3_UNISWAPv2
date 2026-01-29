@@ -31,11 +31,4 @@ contract UniswapV2Factory {
 }
 
 
-
-
-
-
-    // function getPairs(address tokenA, address tokenB) external view returns(address){
-    //     return getPair[tokenA][tokenB];
-    // }
 }

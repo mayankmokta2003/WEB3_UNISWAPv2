@@ -2,7 +2,7 @@ import { client } from "../config/viem.js";
 import { loadAbi } from "../utils/loadAbi.js";
 const pairAbi = loadAbi("src/abi/UniswapV2Pair.json");
 import Pool from "../models/Pool.js";
-import { calculatePrices } from "../utils/calcPrice.js"
+import { calculatePrices } from "../utils/calcPrice.js";
 
 export async function listenToPair(pairAddress) {
   console.log("Listening to Pair:", pairAddress);
@@ -25,7 +25,6 @@ export async function listenToPair(pairAddress) {
     { upsert: true }
   );
 
-
   client.watchContractEvent({
     address: pairAddress,
     abi: pairAbi,
@@ -45,8 +44,7 @@ export async function listenToPair(pairAddress) {
     },
   });
 
-
-   client.watchContractEvent({
+  client.watchContractEvent({
     address: pairAddress,
     abi: pairAbi,
     eventName: "Swap",
@@ -56,7 +54,7 @@ export async function listenToPair(pairAddress) {
 
         const vol0 = amount0In > 0n ? amount0In : amount0Out;
         const vol1 = amount1In > 0n ? amount1In : amount1Out;
-  
+
         await Pool.findOneAndUpdate(
           { pairAddress },
           {
@@ -69,7 +67,4 @@ export async function listenToPair(pairAddress) {
       }
     },
   });
-
-
 }
-

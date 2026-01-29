@@ -65,7 +65,6 @@ export default function Navbar() {
             {address ? <p>{address}</p> : <p>Please connect your wallet</p>}
           </div>
 
-
           <img src={icon4} className="w-60 h-40 rounded-full" />
         </div>
       </div>

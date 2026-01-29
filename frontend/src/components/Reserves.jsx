@@ -41,39 +41,20 @@ export default function Reserves() {
   }
 
   return (
-    // <div>
-    //   <p>Token0: {reserves[0].toString()}</p>
-    //   <p>Token1: {reserves[1].toString()}</p>
-    // </div>
-
-
-
-
-
     <div className="flex flex-row items-center justify-center gap-40">
-
-
-
       <div className="bg-green-950 h-40 w-40 rounded-2xl flex flex-col items-center justify-center space-y-10 ">
         <h1 className="text-green-400 font-semibold">Token0 Reserves</h1>
-        <h1 className="text-green-600 text-3xl font-extrabold">{reserves[0].toString()}</h1>
+        <h1 className="text-green-600 text-3xl font-extrabold">
+          {reserves[0].toString()}
+        </h1>
       </div>
-
-
-
 
       <div className="bg-green-950 h-40 w-40 rounded-2xl flex flex-col items-center justify-center space-y-10 ">
         <h1 className="text-green-400 font-semibold">Token1 Reserves</h1>
-        <h1 className="text-green-600 text-3xl font-extrabold">{reserves[1].toString()}</h1>
+        <h1 className="text-green-600 text-3xl font-extrabold">
+          {reserves[1].toString()}
+        </h1>
       </div>
-
-
     </div>
-
-
-
-
-
-
   );
 }

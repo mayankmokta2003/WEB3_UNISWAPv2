@@ -12,7 +12,7 @@ interface IUniswapV2Pair {
 
     function getReserves() external view returns (uint112, uint112, uint32);
 
-    function burn(address to) external returns (uint256, uint256);
+    function burn(address to, uint256 liquidity) external returns (uint256, uint256);
 }
 
 interface IUniswapV2Factory {
@@ -20,7 +20,6 @@ interface IUniswapV2Factory {
         address tokenA,
         address tokenB
     ) external returns (address pair);
-    // function getPair(address tokenA, address tokenB) external view returns (address pair);
 }
 
 contract UniswapV2Router {
@@ -82,31 +81,21 @@ contract UniswapV2Router {
         IUniswapV2Pair(pair).mint();
     }
 
-    // function removeLiquidity(
-    //     address tokenA,
-    //     address tokenB,
-    //     uint256 liquidity
-    // ) external returns (uint256 amount0, uint256 amount1) {
-    //     // address pair = IUniswapV2Factory(factory).getPair(tokenA, tokenB);
-    //     address pair = UniswapV2Factory(factory).getPair(tokenA, tokenB);
-    //     IERC20(pair).transferFrom(msg.sender, pair, liquidity);
-    //     (amount0, amount1) = IUniswapV2Pair(pair).burn(msg.sender);
-    // }
 
     function removeLiquidity(
         address tokenA,
         address tokenB,
         uint256 liquidity
-    ) external returns (uint256 amount0, uint256 amount1) {
+    ) external {
         require(liquidity > 0, "INVALID_LIQUIDITY");
         address pair = UniswapV2Factory(factory).getPair(tokenA, tokenB);
         require(pair != address(0), "PAIR_NOT_FOUND");
         uint256 userLpBalance = IERC20(pair).balanceOf(msg.sender);
-        require(userLpBalance >= liquidity, "NOT_ENOUGH_LP");
+        require(liquidity <= userLpBalance, "NOT_ENOUGH_LP");
         IERC20(pair).transferFrom(msg.sender, pair, liquidity);
-        (amount0, amount1) = IUniswapV2Pair(pair).burn(msg.sender);
-        require(amount0 > 0 && amount1 > 0, "INSUFFICIENT_BURN");
+        IUniswapV2Pair(pair).burn(msg.sender, liquidity);
     }
+
 
     function swapExactTokensForTokens(
         uint256 amountIn,

@@ -9,9 +9,9 @@ const PORT = process.env.PORT || 5000;
 async function start() {
   await connectDB();
   listenToFactoryEvents();
-    app.listen(PORT, () => {
-        console.log(`Server running on port ${PORT}`)
-    });
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
 }
 
 start();
