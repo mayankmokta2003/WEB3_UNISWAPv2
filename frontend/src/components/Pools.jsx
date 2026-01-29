@@ -24,8 +24,8 @@ export default function Pools() {
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <div>
-      <h2>Liquidity Pools</h2>
+    <div className="flex flex-col justify-center items-center">
+      
 
       {pools.length === 0 && <p>No pools found</p>}
 
@@ -37,7 +37,9 @@ export default function Pools() {
             padding: "12px",
             marginBottom: "12px",
           }}
+          className="space-y-4 rounded-xl flex flex-col justify-center items-center bg-purple-900"
         >
+          <h2 className="text-4xl mb-5">Liquidity Pools</h2>
           <p>
             <b>Pair:</b> {pool.token0} / {pool.token1}
           </p>

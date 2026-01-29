@@ -3,7 +3,6 @@ import AddLiquidity from "./components/AddLiquidity";
 import RemoveLiquidity from "./components/RemoveLiquidity";
 import Swap from "./components/Swap";
 import LPDashboard from "./components/LPDashboard";
-import Balance from "./components/Balance";
 import Pools from "./components/Pools"
 
 function App() {
@@ -14,7 +13,6 @@ function App() {
       <RemoveLiquidity />
       <Swap />
       <LPDashboard />
-      <Balance />
       <Pools /> 
     </div>
   );
