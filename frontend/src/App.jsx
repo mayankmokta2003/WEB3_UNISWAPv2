@@ -4,6 +4,7 @@ import RemoveLiquidity from "./components/RemoveLiquidity";
 import Swap from "./components/Swap";
 import LPDashboard from "./components/LPDashboard";
 import Balance from "./components/Balance";
+import Pools from "./components/Pools"
 
 function App() {
   return (
@@ -14,7 +15,7 @@ function App() {
       <Swap />
       <LPDashboard />
       <Balance />
-      {/* <Pools />  */}
+      <Pools /> 
     </div>
   );
 }
